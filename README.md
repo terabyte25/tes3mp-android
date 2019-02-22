@@ -1,5 +1,9 @@
 # OpenMW for Android
 
+
+## Notes from fork maintainer
+This is forked from xyzz/openmw-android, and implements (alpha) support for tes3mp. All credits go to the tes3mp team and OpenMW team for making this possible, as well as Schnibbsel for helping me test it.
+
 ## Building
 
 There are two steps for building OpenMW for Android. The first step is building C/C++ libraries. The second step is building the Java launcher.

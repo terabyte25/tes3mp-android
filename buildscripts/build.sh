@@ -181,7 +181,6 @@ cp prefix/$ARCH/lib/{libopenal,libSDL2,libGL}.so ../app/src/main/jniLibs/$ABI/
 # copy over libc++_shared
 find ./toolchain/$ARCH/ -iname "libc++_shared.so" -exec cp "{}" ../app/src/main/jniLibs/$ABI/ \;
 
-if [[ $ARCH = "arm" ]]; then
 	echo "==> Deploying resources"
 
 	DST=$DIR/../app/src/main/assets/libopenmw/
@@ -196,6 +195,7 @@ if [[ $ARCH = "arm" ]]; then
 	mkdir -p "$DST/openmw/"
 	cp "$SRC/settings-default.cfg" "$DST/openmw/"
 	cp "$SRC/gamecontrollerdb.txt" "$DST/openmw/"
+	cp "$SRC/tes3mp-client-default.cfg" "$DST/openmw/"
 
 	# local config
 	mkdir -p "$DST/config/openmw/"
@@ -203,9 +203,11 @@ if [[ $ARCH = "arm" ]]; then
 	cp "$SRC/gamecontrollerdb.txt" "$DST/config/openmw/"
 	cp "$DIR/../app/openmw-base.cfg" "$DST/config/openmw/openmw.cfg"
 	cp "$DIR/../app/settings-base.cfg" "$DST/config/openmw/settings.cfg"
-fi
 
 echo "==> Making your debugging life easier"
+
+mv "./build/$ARCH/openmw_osg_mainline-prefix/src/openmw_osg_mainline-build/libtes3mp.so" "./build/$ARCH/openmw_osg_mainline-prefix/src/openmw_osg_mainline-build/libopenmw.so"
+mv "./build/$ARCH/openmw_osg_fork-prefix/src/openmw_osg_fork-build/libtes3mp.so" "./build/$ARCH/openmw_osg_fork-prefix/src/openmw_osg_fork-build/libopenmw.so"
 
 # copy unstripped libs to aid debugging
 rm -rf "./build/$ARCH/symbols" && mkdir -p "./build/$ARCH/symbols"
