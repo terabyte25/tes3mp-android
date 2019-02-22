@@ -37,8 +37,8 @@ set(MYGUI_VERSION 3.2.2)
 set(MYGUI_HASH SHA256=0a28d7ec8a47993cb68deb48b36331e28f12dd92580b709eaef21d599b67a78f)
 
 # https://github.com/ptitSeb/gl4es
-set(GL4ES_VERSION 0f0e118c3f8c28282857b7ef507c3b209f7f6317)
-set(GL4ES_HASH SHA256=98e3cddaccd2eea24eedea9238f318139b2fabb4939ab3ca401f1bd27221f312)
+set(GL4ES_VERSION ec6642351553dbb1dc284bafc55fee39687781ee)
+set(GL4ES_HASH SHA256=63b76b5c032652cc3f4a29f53c7b73661f0748880b2fe529d7f2443362990585)
 
 # https://github.com/openscenegraph/OpenSceneGraph/releases
 set(OSG_MAINLINE_VERSION 3.6.2)
@@ -49,8 +49,8 @@ set(OSG_FORK_VERSION ecedf3232c2f1b3b6a2f06f77ea37a9afb6a93f5)
 set(OSG_FORK_HASH SHA256=254f0ce0e236aa80700877ee8664430c1f491be78ea1118bcd53178260edb4b5)
 
 # https://github.com/OpenMW/openmw/commits/master
-set(OPENMW_VERSION 8834ee95bea9d04fad3a786ada6eb9a3f0d8a16b)
-set(OPENMW_HASH SHA256=418b82c6c8011e9d56a760ed19a1b96cf774ff00b640ab105342e07a2b94b3a4)
+set(OPENMW_VERSION cb5a57e41b42aefa2ab05e5a6494039c14c66eb8)
+set(OPENMW_HASH SHA256=3e33d1e356dc1bb85973df29f2b5216ed63bf6f53ca691c0a4e3f93f55a8f43d)
 
 # End of configurable options
 
@@ -206,6 +206,7 @@ ExternalProject_Add(boost
 	--with-filesystem
 	--with-program_options
 	--with-system
+	--with-iostreams
 	--ignore-site-config
 	toolset=clang-android
 	architecture=${BOOST_ARCH}
@@ -222,6 +223,7 @@ ExternalProject_Add(boost
 	COMMAND ${host}-ranlib ${prefix}/lib/libboost_filesystem.a
 	COMMAND ${host}-ranlib ${prefix}/lib/libboost_program_options.a
 	COMMAND ${host}-ranlib ${prefix}/lib/libboost_system.a
+	COMMAND ${host}-ranlib ${prefix}/lib/libboost_iostreams.a
 )
 
 ExternalProject_Add(ffmpeg
@@ -436,6 +438,7 @@ ExternalProject_Add(osg_fork
 
 set(OPENMW_COMMON
 	-DBUILD_BSATOOL=0
+	-DBUILD_NIFTEST=0
 	-DBUILD_ESMTOOL=0
 	-DBUILD_LAUNCHER=0
 	-DBUILD_MWINIIMPORTER=0
