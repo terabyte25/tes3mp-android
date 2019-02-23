@@ -154,6 +154,27 @@ ExternalProject_Add(libpng
 	INSTALL_COMMAND ${wrapper_command} $(MAKE) install check_PROGRAMS= bin_PROGRAMS=
 )
 
+set(CRABNET_PATCH
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/crabnet.patch
+)
+
+ExternalProject_Add(raknet
+	GIT_REPOSITORY https://github.com/tes3mp/crabnet.git
+	GIT_TAG master
+
+	PATCH_COMMAND ${CRABNET_PATCH}
+
+	CONFIGURE_COMMAND ${wrapper_command} cmake <SOURCE_DIR>
+	${COMMON_CMAKE_ARGS}
+	-DCRABNET_ENABLE_DLL=OFF   
+
+	BUILD_COMMAND ${wrapper_command} $(MAKE)
+
+	INSTALL_COMMAND ""
+	COMMAND cp lib/libRakNetLibStatic.a ${prefix}/lib/
+	COMMAND cp -r <SOURCE_DIR>/include ${prefix}/
+)
+
 ExternalProject_Add(freetype2
 	URL https://download.savannah.gnu.org/releases/freetype/freetype-${FREETYPE2_VERSION}.tar.gz
 	URL_HASH ${FREETYPE2_HASH}
@@ -342,17 +363,6 @@ ExternalProject_Add(mygui
 	INSTALL_COMMAND ${wrapper_command} $(MAKE) install
 )
 
-ExternalProject_Add(raknet
-	GIT_REPOSITORY https://github.com/tes3mp/crabnet.git
-	GIT_TAG master
-
-	CONFIGURE_COMMAND ${wrapper_command} cmake <SOURCE_DIR>
-
-	BUILD_COMMAND ${wrapper_command} $(MAKE) -i
-
-	INSTALL_COMMAND ${wrapper_command} $(MAKE) -i install
-)
-
 set(OSG_COMMON
 	-DOPENGL_PROFILE="GL1"
 	-DDYNAMIC_OPENTHREADS=OFF
@@ -437,12 +447,14 @@ ExternalProject_Add(osg_fork
 )
 
 set(OPENMW_COMMON
+	-DBUILD_BROWSER=0
 	-DBUILD_BSATOOL=0
 	-DBUILD_NIFTEST=0
 	-DBUILD_ESMTOOL=0
 	-DBUILD_LAUNCHER=0
 	-DBUILD_MWINIIMPORTER=0
 	-DBUILD_ESSIMPORTER=0
+	-DBUILD_OPENMW_MP=0
 	-DBUILD_OPENCS=0
 	-DBUILD_WIZARD=0
 	-DBUILD_MYGUI_PLUGIN=0
@@ -454,7 +466,7 @@ set(OPENMW_COMMON
 )
 
 set(OPENMW_PATCH
-	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/android-main-fix.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/android-main-fix.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0001-loadingscreen-disable-for-now.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0002-scenemanager-disable-state-share-inc-compile.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0003-globalmap-fix-race-vs-savegame-load.patch &&

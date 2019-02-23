@@ -1,0 +1,13 @@
+diff --git a/Source/Plugins/FileList.cpp b/Source/Plugins/FileList.cpp
+index 0715b42..bd3b333 100644
+--- a/Source/Plugins/FileList.cpp
++++ b/Source/Plugins/FileList.cpp
+@@ -17,7 +17,7 @@
+ #include "RakAssert.h"
+ 
+ #if defined(ANDROID)
+-#include <asm/io.h>
++
+ #elif defined(_WIN32) || defined(__CYGWIN__)
+ #include <io.h>
+ #endif
