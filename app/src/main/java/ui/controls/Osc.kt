@@ -298,8 +298,10 @@ class Osc {
         OscImageButton("wait", R.drawable.wait, 274, 0, KeyEvent.KEYCODE_T),
         OscImageButton("pause", R.drawable.pause, 950, 0, KeyEvent.KEYCODE_ESCAPE),
         // TODO: replace load/save icons with more intuitive
-        OscImageButton("quickLoad", R.drawable.load, 860, 0, 139),
-        OscImageButton("quickSave", R.drawable.save, 780, 0, 135),
+        OscImageButton("wait", R.drawable.wait, 780, 0, KeyEvent.KEYCODE_Y),
+        // tes3mp doesn't allow quickload and quicksave
+        // OscImageButton("quickLoad", R.drawable.load, 860, 0, 139),
+        // OscImageButton("quickSave", R.drawable.save, 780, 0, 135),
         OscImageButton("weapon", R.drawable.broadsword1, 880, 95, KeyEvent.KEYCODE_F),
         OscImageButton("jump", R.drawable.jump, 920, 195, KeyEvent.KEYCODE_E),
         OscImageButton("fire", R.drawable.crossbow, 720, 300, 1, true, 90),
