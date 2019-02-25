@@ -171,6 +171,9 @@ rm -rf ../app/wrap/
 rm -rf ../app/src/main/jniLibs/$ABI/
 mkdir -p ../app/src/main/jniLibs/$ABI/
 
+mv "./build/$ARCH/openmw_osg_mainline-prefix/src/openmw_osg_mainline-build/libtes3mp.so" "./build/$ARCH/openmw_osg_mainline-prefix/src/openmw_osg_mainline-build/libopenmw.so"
+mv "./build/$ARCH/openmw_osg_fork-prefix/src/openmw_osg_fork-build/libtes3mp.so" "./build/$ARCH/openmw_osg_fork-prefix/src/openmw_osg_fork-build/libopenmw.so"
+
 # libopenmw.so is a special case
 find build/$ARCH/openmw_osg_mainline-prefix/ -iname "libopenmw.so" -exec cp "{}" ../app/src/main/jniLibs/$ABI/libopenmw_osg_mainline.so \;
 find build/$ARCH/openmw_osg_fork-prefix/ -iname "libopenmw.so" -exec cp "{}" ../app/src/main/jniLibs/$ABI/libopenmw_osg_fork.so \;
@@ -205,9 +208,6 @@ find ./toolchain/$ARCH/ -iname "libc++_shared.so" -exec cp "{}" ../app/src/main/
 	cp "$DIR/../app/settings-base.cfg" "$DST/config/openmw/settings.cfg"
 
 echo "==> Making your debugging life easier"
-
-mv "./build/$ARCH/openmw_osg_mainline-prefix/src/openmw_osg_mainline-build/libtes3mp.so" "./build/$ARCH/openmw_osg_mainline-prefix/src/openmw_osg_mainline-build/libopenmw.so"
-mv "./build/$ARCH/openmw_osg_fork-prefix/src/openmw_osg_fork-build/libtes3mp.so" "./build/$ARCH/openmw_osg_fork-prefix/src/openmw_osg_fork-build/libopenmw.so"
 
 # copy unstripped libs to aid debugging
 rm -rf "./build/$ARCH/symbols" && mkdir -p "./build/$ARCH/symbols"

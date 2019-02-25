@@ -27,7 +27,7 @@ const val VIRTUAL_SCREEN_HEIGHT = 768
  * @param defaultOpacity: default opacity of the element
  */
 open class OscElement(
-        private val uniqueId: String,
+        public val uniqueId: String,
         private val defaultX: Int,
         private val defaultY: Int,
         private val defaultSize: Int = 50,
@@ -298,8 +298,10 @@ class Osc {
         OscImageButton("wait", R.drawable.wait, 274, 0, KeyEvent.KEYCODE_T),
         OscImageButton("pause", R.drawable.pause, 950, 0, KeyEvent.KEYCODE_ESCAPE),
         // TODO: replace load/save icons with more intuitive
-        OscImageButton("quickLoad", R.drawable.load, 860, 0, 139),
-        OscImageButton("quickSave", R.drawable.save, 780, 0, 135),
+        OscImageButton("chat", R.drawable.chat, 780, 0, KeyEvent.KEYCODE_Y),
+        // tes3mp doesn't allow quickload and quicksave
+        // OscImageButton("quickLoad", R.drawable.load, 860, 0, 139),
+        // OscImageButton("quickSave", R.drawable.save, 780, 0, 135),
         OscImageButton("weapon", R.drawable.broadsword1, 880, 95, KeyEvent.KEYCODE_F),
         OscImageButton("jump", R.drawable.jump, 920, 195, KeyEvent.KEYCODE_E),
         OscImageButton("fire", R.drawable.crossbow, 720, 300, 1, true, 90),
@@ -316,8 +318,8 @@ class Osc {
     init {
         val fnButtons = ArrayList<OscHiddenButton>()
 
-        // Fn buttons: F1, F3, F4, F10, F11 are the only ones we care about
-        arrayOf(1, 3, 4, 10, 11).forEachIndexed{ i, el ->
+        // Fn buttons: F1, F2, F3, F4, F10, F11 are the only ones we care about
+        arrayOf(1, 2, 3, 4, 10, 11).forEachIndexed{ i, el ->
             val code = 130 + el
             fnButtons.add(OscHiddenButton("f$el", 70, 70 * (i + 1), "F$el", code))
         }
@@ -349,7 +351,7 @@ class Osc {
         osk.toggle()
         keyboardVisible = !keyboardVisible
         for (element in elements) {
-            if (element == keyboardButton)
+            if (element == keyboardButton || element.uniqueId == "chat")
                 continue
             // TODO: this kinda screws up the state for hidden toggles (i.e. open toggle => click keyboard twice)
             if (!keyboardVisible && element is OscHiddenButton && element !is OscHiddenToggle)

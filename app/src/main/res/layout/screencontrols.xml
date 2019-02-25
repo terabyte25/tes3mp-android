@@ -248,6 +248,16 @@
             android:src="@drawable/broadsword1" />
 
         <ImageButton
+            android:id="@+id/buttonchat"
+            android:layout_width="50dip"
+            android:layout_height="50dip"
+            android:background="@null"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/chat" />
+
+        <ImageButton
             android:id="@+id/buttonsuperjump"
             android:layout_width="50dip"
             android:layout_height="50dip"
