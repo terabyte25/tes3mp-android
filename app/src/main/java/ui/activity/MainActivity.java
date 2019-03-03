@@ -31,6 +31,7 @@ import java.io.IOException;
 
 import constants.Constants;
 import file.utils.CopyFilesFromAssets;
+import ui.fragments.FragmentBrowser;
 import ui.game.GameState;
 import ui.fragments.FragmentControls;
 import ui.fragments.FragmentSettings;
@@ -141,6 +142,12 @@ public class MainActivity extends AppCompatActivity {
                         MainActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new FragmentSettings()).commit();
 
                         return true;
+                    case R.id.browser:
+                        showOverflowMenu(false);
+                        disableToolBarViews();
+                        MainActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new FragmentBrowser(MainActivity.this)).commit();
+
+                        return true;
 /*                    case R.id.textureDecoder:
                         showOverflowMenu(false);
                         disableToolBarViews();
@@ -224,8 +231,7 @@ public class MainActivity extends AppCompatActivity {
         CopyFilesFromAssets copyFiles = new CopyFilesFromAssets(this, CONFIGS_FILES_STORAGE_PATH);
         copyFiles.copyFileOrDir("libopenmw/config");
     }
-
-    private void startGame() {
+    public void startGame() {
         ProgressDialog dialog = ProgressDialog.show(
                 this, "", "Preparing for launch...", true);
 

@@ -22,6 +22,11 @@
             android:checked="false"
             android:title="Controls" />
 
+        <item
+            android:id="@+id/browser"
+            android:checked="false"
+            android:title="Browser" />
+
     </group>
 
 </menu>

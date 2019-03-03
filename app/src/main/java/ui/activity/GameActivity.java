@@ -24,6 +24,7 @@ import parser.CommandlineParser;
 import ui.controls.Osc;
 import ui.game.GameState;
 import file.ConfigsFileStorageHelper;
+import ui.fragments.FragmentBrowser;
 
 import static utils.Utils.hideAndroidControls;
 
@@ -212,9 +213,15 @@ public class GameActivity extends SDLActivity {
     }
 
     protected String[] getArguments() {
-        String cmd = PreferenceManager.getDefaultSharedPreferences(this).getString("commandLine", "");
-        CommandlineParser commandlineParser = new CommandlineParser(cmd);
-        return commandlineParser.getArgv();
+        String browserarg = FragmentBrowser.getArgv();
+        if(browserarg == "") {
+            String cmd = PreferenceManager.getDefaultSharedPreferences(this).getString("commandLine", "");
+            CommandlineParser commandlineParser = new CommandlineParser(cmd);
+            return commandlineParser.getArgv();
+        } else {
+            CommandlineParser commandlineParser = new CommandlineParser(browserarg);
+            return commandlineParser.getArgv();
+        }
     }
 
 }
