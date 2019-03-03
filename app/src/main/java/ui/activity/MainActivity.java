@@ -23,9 +23,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.ndk.CrashlyticsNdk;
 import com.libopenmw.openmw.R;
 import com.melnykov.fab.FloatingActionButton;
 
+import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.io.IOException;
 
@@ -36,7 +39,6 @@ import ui.game.GameState;
 import ui.fragments.FragmentControls;
 import ui.fragments.FragmentSettings;
 import permission.PermissionHelper;
-import ui.screen.ScreenResolutionHelper;
 import ui.screen.ScreenScaler;
 import file.ConfigsFileStorageHelper;
 import prefs.PreferencesHelper;
@@ -63,10 +65,14 @@ public class MainActivity extends AppCompatActivity {
     private static TEXT_MODE editTextMode;
     private ConfigsFileStorageHelper configsFileStorageHelper;
 
+    public static int resolutionX = 0;
+    public static int resolutionY = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         GameState.setGameState(false);
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
         PermissionHelper.getWriteExternalStoragePermission(MainActivity.this);
         isSettingsEnabled = true;
         setContentView(R.layout.main);
@@ -231,6 +237,34 @@ public class MainActivity extends AppCompatActivity {
         CopyFilesFromAssets copyFiles = new CopyFilesFromAssets(this, CONFIGS_FILES_STORAGE_PATH);
         copyFiles.copyFileOrDir("libopenmw/config");
     }
+    private void obtainScreenResolution() {
+        View v = getWindow().getDecorView();
+        resolutionX = v.getWidth();
+        resolutionY = v.getHeight();
+
+        // Split resolution e.g 640x480 to width/height
+        String customResolution = prefs.getString("pref_customResolution", "");
+        int sep = customResolution.indexOf("x");
+        if (sep > 0) {
+            try {
+                int x = Integer.parseInt(customResolution.substring(0, sep));
+                int y = Integer.parseInt(customResolution.substring(sep + 1));
+
+                resolutionX = x;
+                resolutionY = y;
+            } catch (NumberFormatException e) {
+                // pass
+            }
+        }
+
+        try {
+            file.Writer.write(String.valueOf(resolutionX), ConfigsFileStorageHelper.SETTINGS_CFG, "resolution x");
+            file.Writer.write(String.valueOf(resolutionY), ConfigsFileStorageHelper.SETTINGS_CFG, "resolution y");
+        } catch (IOException e) {
+            // TODO
+        }
+    }
+
     public void startGame() {
         ProgressDialog dialog = ProgressDialog.show(
                 this, "", "Preparing for launch...", true);
@@ -258,10 +292,6 @@ public class MainActivity extends AppCompatActivity {
                 copyFiles.copyFileOrDir("libopenmw/openmw");
                 copyFiles.copyFileOrDir("libopenmw/resources");
 
-                // settings.cfg: resolution
-                ScreenResolutionHelper screenHelper = new ScreenResolutionHelper(activity);
-                screenHelper.writeScreenResolution();
-
                 // openmw.cfg: data, resources
                 // TODO: probably should just reuse ConfigsFileStorageHelper
                 file.Writer.write(
@@ -280,6 +310,7 @@ public class MainActivity extends AppCompatActivity {
                 file.Writer.write(prefs.getString("pref_preload", "false"), SETTINGS_CFG, "preload enabled");
 
                 runOnUiThread(() -> {
+                    obtainScreenResolution();
                     dialog.hide();
                     runGame();
                 });
