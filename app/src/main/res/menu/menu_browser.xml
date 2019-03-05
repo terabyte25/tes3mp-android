@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+    <group android:id="@+id/main_menu_group">
+        <item
+            android:id="@+id/action_sortPlayers"
+            android:orderInCategory="100"
+            android:title="Sort numerically"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_sortAlphabet"
+            android:orderInCategory="100"
+            android:title="Sort alphabetically"
+            app:showAsAction="never" />
+    </group>
+</menu>

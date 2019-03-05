@@ -16,6 +16,8 @@ import android.widget.ListView;
 
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Collections;
 
 import com.libopenmw.openmw.R;
 
@@ -26,6 +28,8 @@ import utils.Server;
 public class FragmentBrowser extends Fragment {
     public static ArrayList<Server> Servers = new ArrayList<>();
     public static CustomAdapter adapter;
+    public static boolean sortPlayersFilter = false;
+    public static boolean sortAlphabetFilter = false;
     private static SwipeRefreshLayout pullToRefresh;
     ListView listView;
     public static String CommandArgs = "";
@@ -103,6 +107,29 @@ public class FragmentBrowser extends Fragment {
         });
 
         builder.show();
+    }
+
+    public static void sortPlayers() {
+        // https://stackoverflow.com/questions/31470385/sort-an-arraylist-based-on-integer
+        adapter.sort(new Comparator<Server>(){
+            public int compare(Server m1, Server m2) {
+                return m2.getplayerCount() - m1.getplayerCount(); // sort order
+            }
+        });
+        adapter.notifyDataSetChanged();
+        sortPlayersFilter = true;
+        sortAlphabetFilter = false;
+    }
+
+    public static void sortAlphabet() {
+        adapter.sort(new Comparator<Server>(){
+            public int compare(Server m1, Server m2) {
+                return m1.getserverName().compareTo(m2.getserverName());
+            }
+        });
+        adapter.notifyDataSetChanged();
+        sortPlayersFilter = false;
+        sortAlphabetFilter = true;
     }
 
 }

@@ -144,6 +144,7 @@ public class CustomAdapter extends ArrayAdapter<Server> implements View.OnClickL
 
         @Override
         protected void onPostExecute(String result) {
+            FragmentBrowser.Servers.clear();
             try {
 
                 JSONObject obj = new JSONObject(result);
@@ -175,6 +176,11 @@ public class CustomAdapter extends ArrayAdapter<Server> implements View.OnClickL
             } catch (Throwable t) {
             }
             // https://stackoverflow.com/questions/16441298/android-call-notifydatasetchanged-from-asynctask
+            if (FragmentBrowser.sortPlayersFilter)
+                FragmentBrowser.sortPlayers();
+            else if (FragmentBrowser.sortAlphabetFilter)
+                FragmentBrowser.sortAlphabet();
+            
             CustomAdapter.this.notifyDataSetChanged();
 
             super.onPostExecute("yes");

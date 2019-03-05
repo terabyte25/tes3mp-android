@@ -149,7 +149,8 @@ public class MainActivity extends AppCompatActivity {
 
                         return true;
                     case R.id.browser:
-                        showOverflowMenu(false);
+                        showOverflowMenu(true);
+                        isSettingsEnabled = false;
                         disableToolBarViews();
                         MainActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new FragmentBrowser(MainActivity.this)).commit();
 
@@ -359,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
         if (isSettingsEnabled)
             inflater.inflate(R.menu.menu_settings, menu);
         else
-            inflater.inflate(R.menu.menu_plugins, menu);
+            inflater.inflate(R.menu.menu_browser, menu);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -368,6 +369,12 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (!isSettingsEnabled)
             switch (id) {
+                case R.id.action_sortPlayers:
+                    FragmentBrowser.sortPlayers();
+                    break;
+                case R.id.action_sortAlphabet:
+                    FragmentBrowser.sortAlphabet();
+                    break;
                 default:
                     break;
             }
