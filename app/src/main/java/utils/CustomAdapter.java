@@ -43,7 +43,7 @@ public class CustomAdapter extends ArrayAdapter<Server> implements View.OnClickL
         TextView serverName;
         TextView ip;
         TextView playerCount;
-        TextView isPassworded;
+        TextView passworded;
     }
 
 
@@ -85,6 +85,7 @@ public class CustomAdapter extends ArrayAdapter<Server> implements View.OnClickL
             viewHolder.serverName = (TextView) convertView.findViewById(R.id.name);
             viewHolder.ip = (TextView) convertView.findViewById(R.id.ip);
             viewHolder.playerCount = (TextView) convertView.findViewById(R.id.playerCount);
+            viewHolder.passworded = (TextView) convertView.findViewById(R.id.isPassworded);
             // viewHolder.info = (ImageView) convertView.findViewById(R.id.item_info);
 
             result=convertView;
@@ -103,6 +104,7 @@ public class CustomAdapter extends ArrayAdapter<Server> implements View.OnClickL
         viewHolder.serverName.setText(Server.getserverName());
         viewHolder.ip.setText(Server.getip());
         viewHolder.playerCount.setText(String.valueOf(Server.getplayerCount()));
+        viewHolder.passworded.setText(Server.getPassworded() ? "Passworded" : "");
         // Return the completed view to render on screen
         return convertView;
     }

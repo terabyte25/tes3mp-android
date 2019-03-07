@@ -43,9 +43,16 @@
             android:textAppearance="?android:attr/textAppearanceButton"
             android:textColor="@android:color/black"
             android:textStyle="bold" />
-
-
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/isPassworded"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:textColor="@android:color/black" />
 
 
 </RelativeLayout>
