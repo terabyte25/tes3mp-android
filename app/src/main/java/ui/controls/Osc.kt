@@ -11,7 +11,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import com.libopenmw.openmw.R
-import ui.activity.GameActivity
 
 const val VIRTUAL_SCREEN_WIDTH = 1024
 const val VIRTUAL_SCREEN_HEIGHT = 768
@@ -285,7 +284,9 @@ class OscHiddenToggle(
 
 }
 
-class Osc {
+class Osc(
+    multiplayer: Boolean
+) {
     private var osk = Osk()
     private var keyboardVisible = false
     private var keyboardButton = OscKeyboardButton("keyboard", R.drawable.keyboard, 586, 0, this)
@@ -297,10 +298,6 @@ class Osc {
         OscImageButton("wait", R.drawable.wait, 274, 0, KeyEvent.KEYCODE_T),
         OscImageButton("pause", R.drawable.pause, 950, 0, KeyEvent.KEYCODE_ESCAPE),
         // TODO: replace load/save icons with more intuitive
-        OscImageButton("chat", R.drawable.chat, 780, 0, KeyEvent.KEYCODE_Y),
-        // tes3mp doesn't allow quickload and quicksave
-        // OscImageButton("quickLoad", R.drawable.load, 860, 0, 139),
-        // OscImageButton("quickSave", R.drawable.save, 780, 0, 135),
         OscImageButton("weapon", R.drawable.broadsword1, 880, 95, KeyEvent.KEYCODE_F),
         OscImageButton("jump", R.drawable.jump, 920, 195, KeyEvent.KEYCODE_E),
         OscImageButton("fire", R.drawable.crossbow, 720, 300, 1, true, 90),
@@ -313,8 +310,16 @@ class Osc {
         OscJoystickLeft("joystickLeft", 75, 400, 170, 0),
         OscJoystickRight("joystickRight", 650, 400, 170, 1)
     )
-
+ 
     init {
+        // add buttons we didn't do earlier
+        if (multiplayer) { 
+            elements.add(OscImageButton("chat", R.drawable.chat, 780, 0, KeyEvent.KEYCODE_Y))
+            // tes3mp doesn't allow quickload and quicksave
+        } else {
+            elements.add(OscImageButton("quickLoad", R.drawable.load, 860, 0, 139))
+            elements.add(OscImageButton("quickSave", R.drawable.save, 780, 0, 135))
+        }
         val fnButtons = ArrayList<OscHiddenButton>()
 
         // Fn buttons: F1, F2, F3, F4, F10, F11 are the only ones we care about

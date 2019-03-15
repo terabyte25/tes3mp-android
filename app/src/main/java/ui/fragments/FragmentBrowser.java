@@ -13,7 +13,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-
+import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -55,9 +56,13 @@ public class FragmentBrowser extends Fragment {
 
 
                 CommandArgs = ("--connect " + Server.getip());
-                if(Server.getPassworded()) {
+                if (!PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("multiplayer", false)) {
+                    Toast toast = Toast.makeText(activity,
+                        "You must enable multiplayer in the settings menu in order to join a server.", Toast.LENGTH_LONG);
+                    toast.show();
+                } else if (Server.getPassworded()) 
                     displayInput();
-                } else
+                else
                     activity.startGame();
             }
         });
