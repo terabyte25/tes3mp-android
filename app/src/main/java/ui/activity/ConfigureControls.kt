@@ -5,6 +5,7 @@ import com.libopenmw.openmw.R
 import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.MotionEvent
 import android.view.View
 import android.widget.RelativeLayout
@@ -54,7 +55,7 @@ class ConfigureCallback(activity: Activity) : View.OnTouchListener {
 class ConfigureControls : Activity() {
 
     private var callback: ConfigureCallback? = null
-    private var osc = Osc()
+    private var osc = Osc(false) // bandaid fix, the input parameter needs to be PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("multiplayer", false), but I can't get a proper context
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

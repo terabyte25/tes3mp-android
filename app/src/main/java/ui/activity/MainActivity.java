@@ -287,16 +287,18 @@ public class MainActivity extends AppCompatActivity {
                 // wipe old "wipeable" (see ConfigsFileStorageHelper) config files just to be safe
                 deleteRecursive(new File(CONFIGS_FILES_STORAGE_PATH + "/openmw"));
                 deleteRecursive(new File(CONFIGS_FILES_STORAGE_PATH + "/resources"));
+                deleteRecursive(new File(CONFIGS_FILES_STORAGE_PATH + "/tes3mp-resources"));
 
                 // copy all assets
                 CopyFilesFromAssets copyFiles = new CopyFilesFromAssets(activity, CONFIGS_FILES_STORAGE_PATH);
                 copyFiles.copyFileOrDir("libopenmw/openmw");
                 copyFiles.copyFileOrDir("libopenmw/resources");
+                copyFiles.copyFileOrDir("libopenmw/tes3mp-resources");
 
                 // openmw.cfg: data, resources
                 // TODO: probably should just reuse ConfigsFileStorageHelper
                 file.Writer.write(
-                        CONFIGS_FILES_STORAGE_PATH + "/resources",
+                        CONFIGS_FILES_STORAGE_PATH + (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("multiplayer", false) ? "/tes3mp-resources" : "/resources"),
                         OPENMW_CFG,
                         "resources");
                 // TODO: it will crash if there's no value/invalid value provided

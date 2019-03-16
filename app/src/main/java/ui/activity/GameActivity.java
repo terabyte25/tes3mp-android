@@ -48,7 +48,7 @@ public class GameActivity extends SDLActivity {
     private SharedPreferences prefs;
 
     String getOpenmwLibName() {
-        return "openmw_osg_" + prefs.getString("pref_osg", "");
+        return (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("multiplayer", false) ? "tes3mp" : "openmw") + "_osg_" + prefs.getString("pref_osg", "");
     }
 
     @Override
@@ -114,7 +114,7 @@ public class GameActivity extends SDLActivity {
         hideControls = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.HIDE_CONTROLS, false);
         if (!hideControls) {
             RelativeLayout layout = getLayout();
-            Osc osc = new Osc();
+            Osc osc = new Osc(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("multiplayer", false));
             osc.placeElements(layout);
             getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> osc.relayout());
             layout.post(() -> osc.relayout());

@@ -52,6 +52,10 @@ set(OSG_FORK_HASH SHA256=254f0ce0e236aa80700877ee8664430c1f491be78ea1118bcd53178
 set(OPENMW_VERSION 3b8b0b5dd754e9d749142a45ec0f56555bc5f294)
 set(OPENMW_HASH SHA256=fc289c972df8833a5a8cc4445a35ee7bf6ee5399095dc3ab1bacc45d40390206)
 
+# https://github.com/tes3mp/openmw-tes3mp/commits/0.7.0
+set(TES3MP_VERSION 292536439eeda58becdb7e441fe2e61ebb74529e)
+set(TES3MP_HASH SHA256=5f809dfb47586c8d7e6efe12eb2c32b5fc69dfa68f1d13962dda950168727d75)
+
 # End of configurable options
 
 project(openmw-android)
@@ -464,8 +468,17 @@ set(OPENMW_COMMON
 	-DOSG_STATIC=TRUE
 	-DMyGUI_LIBRARY=${prefix}/lib/libMyGUIEngineStatic.a
 )
-
 set(OPENMW_PATCH
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw-revert-ui-dimensions.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw-add-simpler-collisions-option.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw-shadows-red-sky.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0001-loadingscreen-disable-for-now.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0002-scenemanager-disable-state-share-inc-compile.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0003-globalmap-fix-race-vs-savegame-load.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0004-getUVBuffer-pre-set-array-binding-to-avoid-thread-ra.patch
+)
+
+set(TES3MP_PATCH
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/android-main-fix.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0001-loadingscreen-disable-for-now.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0002-scenemanager-disable-state-share-inc-compile.patch &&
@@ -474,10 +487,11 @@ set(OPENMW_PATCH
 )
 
 ExternalProject_Add(openmw_osg_mainline
-	DEPENDS boost openal osg_mainline mygui ffmpeg sdl2 bullet raknet
+	DEPENDS boost openal osg_mainline mygui ffmpeg sdl2 bullet
 
-	GIT_REPOSITORY https://github.com/tes3mp/openmw-tes3mp.git
-	GIT_TAG 0.7.0
+	URL https://github.com/OpenMW/openmw/archive/${OPENMW_VERSION}.tar.gz
+	URL_HASH ${OPENMW_HASH}
+	DOWNLOAD_DIR ${download_dir}
 
 	PATCH_COMMAND ${OPENMW_PATCH}
 
@@ -500,12 +514,65 @@ ExternalProject_Add(openmw_osg_mainline
 )
 
 ExternalProject_Add(openmw_osg_fork
+	DEPENDS boost openal osg_fork mygui ffmpeg sdl2 bullet
+
+	URL https://github.com/OpenMW/openmw/archive/${OPENMW_VERSION}.tar.gz
+	URL_HASH ${OPENMW_HASH}
+	DOWNLOAD_DIR ${download_dir}
+
+	PATCH_COMMAND ${OPENMW_PATCH}
+
+	CONFIGURE_COMMAND ${wrapper_command} cmake <SOURCE_DIR>
+	${COMMON_CMAKE_ARGS}
+	${OPENMW_COMMON}
+	-DOSG_PLUGINS_DIR=${osg_fork_plugins_dir}
+	-DOSGDB_BMP_LIBRARY=${osg_fork_plugins_dir}/libosgdb_bmp.a
+	-DOSGDB_DDS_LIBRARY=${osg_fork_plugins_dir}/libosgdb_dds.a
+	-DOSGDB_JPEG_LIBRARY=${osg_fork_plugins_dir}/libosgdb_jpeg.a
+	-DOSGDB_OSG_LIBRARY=${osg_fork_plugins_dir}/libosgdb_osg.a
+	-DOSGDB_PNG_LIBRARY=${osg_fork_plugins_dir}/libosgdb_png.a
+	-DOSGDB_TGA_LIBRARY=${osg_fork_plugins_dir}/libosgdb_tga.a
+	-DOSGDB_SERIALIZERS_OSG_LIBRARY=${osg_fork_plugins_dir}/libosgdb_serializers_osg.a
+	-DOPENMW_DEPENDENCIES_DIR=${prefix}/osg_fork
+
+	BUILD_COMMAND $(MAKE)
+
+	INSTALL_COMMAND ""
+)
+
+ExternalProject_Add(tes3mp_osg_mainline
+	DEPENDS boost openal osg_mainline mygui ffmpeg sdl2 bullet raknet
+
+	GIT_REPOSITORY https://github.com/tes3mp/openmw-tes3mp.git
+	GIT_TAG ${TES3MP_VERSION}
+
+	PATCH_COMMAND ${TES3MP_PATCH}
+
+	CONFIGURE_COMMAND ${wrapper_command} cmake <SOURCE_DIR>
+	${COMMON_CMAKE_ARGS}
+	${OPENMW_COMMON}
+	-DOSG_PLUGINS_DIR=${osg_mainline_plugins_dir}
+	-DOSGDB_BMP_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_bmp.a
+	-DOSGDB_DDS_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_dds.a
+	-DOSGDB_JPEG_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_jpeg.a
+	-DOSGDB_OSG_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_osg.a
+	-DOSGDB_PNG_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_png.a
+	-DOSGDB_TGA_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_tga.a
+	-DOSGDB_SERIALIZERS_OSG_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_serializers_osg.a
+	-DOPENMW_DEPENDENCIES_DIR=${prefix}/osg_mainline
+
+	BUILD_COMMAND $(MAKE)
+
+	INSTALL_COMMAND ""
+)
+
+ExternalProject_Add(tes3mp_osg_fork
 	DEPENDS boost openal osg_fork mygui ffmpeg sdl2 bullet raknet
 
 	GIT_REPOSITORY https://github.com/tes3mp/openmw-tes3mp.git
-	GIT_TAG 0.7.0
+	GIT_TAG ${TES3MP_VERSION}
 
-	PATCH_COMMAND ${OPENMW_PATCH}
+	PATCH_COMMAND ${TES3MP_PATCH}
 
 	CONFIGURE_COMMAND ${wrapper_command} cmake <SOURCE_DIR>
 	${COMMON_CMAKE_ARGS}

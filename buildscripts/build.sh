@@ -171,12 +171,11 @@ rm -rf ../app/wrap/
 rm -rf ../app/src/main/jniLibs/$ABI/
 mkdir -p ../app/src/main/jniLibs/$ABI/
 
-mv "./build/$ARCH/openmw_osg_mainline-prefix/src/openmw_osg_mainline-build/libtes3mp.so" "./build/$ARCH/openmw_osg_mainline-prefix/src/openmw_osg_mainline-build/libopenmw.so"
-mv "./build/$ARCH/openmw_osg_fork-prefix/src/openmw_osg_fork-build/libtes3mp.so" "./build/$ARCH/openmw_osg_fork-prefix/src/openmw_osg_fork-build/libopenmw.so"
-
 # libopenmw.so is a special case
 find build/$ARCH/openmw_osg_mainline-prefix/ -iname "libopenmw.so" -exec cp "{}" ../app/src/main/jniLibs/$ABI/libopenmw_osg_mainline.so \;
 find build/$ARCH/openmw_osg_fork-prefix/ -iname "libopenmw.so" -exec cp "{}" ../app/src/main/jniLibs/$ABI/libopenmw_osg_fork.so \;
+find build/$ARCH/tes3mp_osg_mainline-prefix/ -iname "libtes3mp.so" -exec cp "{}" ../app/src/main/jniLibs/$ABI/libtes3mp_osg_mainline.so \;
+find build/$ARCH/tes3mp_osg_fork-prefix/ -iname "libtes3mp.so" -exec cp "{}" ../app/src/main/jniLibs/$ABI/libtes3mp_osg_fork.so \;
 
 # copy over libs we compiled
 cp prefix/$ARCH/lib/{libopenal,libSDL2,libGL}.so ../app/src/main/jniLibs/$ABI/
@@ -188,17 +187,21 @@ find ./toolchain/$ARCH/ -iname "libc++_shared.so" -exec cp "{}" ../app/src/main/
 
 	DST=$DIR/../app/src/main/assets/libopenmw/
 	SRC=build/$ARCH/openmw_osg_mainline-prefix/src/openmw_osg_mainline-build/
+	SRCTES3MP=build/$ARCH/tes3mp_osg_mainline-prefix/src/tes3mp_osg_mainline-build/
 
 	rm -rf "$DST" && mkdir -p "$DST"
 
 	# resources
+	cp -r "$SRCTES3MP/resources" "$DST"
+	mv "$DST/resources" "$DST/tes3mp-resources" 
 	cp -r "$SRC/resources" "$DST"
 
 	# global config
 	mkdir -p "$DST/openmw/"
-	cp "$SRC/settings-default.cfg" "$DST/openmw/"
+	# cp "$SRC/settings-default.cfg" "$DST/openmw/" for now
 	cp "$SRC/gamecontrollerdb.txt" "$DST/openmw/"
 	cp "$SRC/tes3mp-client-default.cfg" "$DST/openmw/"
+	cp "$DIR/../app/settings-default.cfg" "$DST/openmw/"
 
 	# local config
 	mkdir -p "$DST/config/openmw/"
@@ -215,6 +218,8 @@ cp "./build/$ARCH/openal-prefix/src/openal-build/libopenal.so" "./symbols/$ABI/"
 cp "./build/$ARCH/sdl2-prefix/src/sdl2-build/obj/local/$ABI/libSDL2.so" "./symbols/$ABI/"
 cp "./build/$ARCH/openmw_osg_mainline-prefix/src/openmw_osg_mainline-build/libopenmw.so" "./symbols/$ABI/libopenmw_osg_mainline.so"
 cp "./build/$ARCH/openmw_osg_fork-prefix/src/openmw_osg_fork-build/libopenmw.so" "./symbols/$ABI/libopenmw_osg_fork.so"
+cp "./build/$ARCH/tes3mp_osg_mainline-prefix/src/tes3mp_osg_mainline-build/libtes3mp.so" "./symbols/$ABI/libtes3mp_osg_mainline.so"
+cp "./build/$ARCH/tes3mp_osg_fork-prefix/src/tes3mp_osg_fork-build/libtes3mp.so" "./symbols/$ABI/libtes3mp_osg_fork.so"
 cp "./build/$ARCH/gl4es-prefix/src/gl4es-build/obj/local/$ABI/libGL.so" "./symbols/$ABI/"
 cp "../app/src/main/jniLibs/$ABI/libc++_shared.so" "./symbols/$ABI/"
 

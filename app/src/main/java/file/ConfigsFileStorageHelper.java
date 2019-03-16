@@ -67,7 +67,7 @@ public class ConfigsFileStorageHelper {
                 try {
 
                     file.Writer.write(
-                            CONFIGS_FILES_STORAGE_PATH + "/resources",
+                            CONFIGS_FILES_STORAGE_PATH + (PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("multiplayer", false) ? "/tes3mp-resources" : "/resources"),
                             OPENMW_CFG,
                             "libopenmw/resources");
                     file.Writer.write(Constants.APPLICATION_DATA_STORAGE_PATH, OPENMW_CFG, "data");

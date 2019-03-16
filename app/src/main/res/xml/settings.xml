@@ -24,6 +24,11 @@
             android:summary="Keep screen always on"
             android:title="Screen" />
 
+        <CheckBoxPreference
+            android:key="multiplayer"
+            android:summary="Change between Singleplayer and Multiplayer mode"
+            android:title="Multiplayer" />
+
 
     </PreferenceCategory>
 
