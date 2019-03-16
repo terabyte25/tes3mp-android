@@ -543,9 +543,8 @@ ExternalProject_Add(openmw_osg_fork
 ExternalProject_Add(tes3mp_osg_mainline
 	DEPENDS boost openal osg_mainline mygui ffmpeg sdl2 bullet raknet
 
-	URL https://github.com/tes3mp/openmw-tes3mp/archive/${TES3MP_VERSION}.tar.gz
-	URL_HASH ${TES3MP_HASH}
-	DOWNLOAD_DIR ${download_dir}
+	GIT_REPOSITORY https://github.com/tes3mp/openmw-tes3mp.git
+	GIT_TAG ${TES3MP_VERSION}
 
 	PATCH_COMMAND ${TES3MP_PATCH}
 
@@ -570,9 +569,8 @@ ExternalProject_Add(tes3mp_osg_mainline
 ExternalProject_Add(tes3mp_osg_fork
 	DEPENDS boost openal osg_fork mygui ffmpeg sdl2 bullet raknet
 
-	URL https://github.com/tes3mp/openmw-tes3mp/archive/${TES3MP_VERSION}.tar.gz
-	URL_HASH ${TES3MP_HASH}
-	DOWNLOAD_DIR ${download_dir}
+	GIT_REPOSITORY https://github.com/tes3mp/openmw-tes3mp.git
+	GIT_TAG ${TES3MP_VERSION}
 
 	PATCH_COMMAND ${TES3MP_PATCH}
 
