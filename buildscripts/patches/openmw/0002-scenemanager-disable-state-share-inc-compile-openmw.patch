@@ -1,0 +1,29 @@
+diff --git a/components/resource/scenemanager.cpp b/components/resource/scenemanager.cpp
+index 61a40ee4b..7c85243d2 100644
+--- a/components/resource/scenemanager.cpp
++++ b/components/resource/scenemanager.cpp
+@@ -528,9 +528,10 @@ namespace Resource
+ 
+                 optimizer.optimize(loaded, options);
+             }
+-
++            #if 0
+             if (mIncrementalCompileOperation)
+                 mIncrementalCompileOperation->add(loaded);
++            #endif
+             else
+                 loaded->getBound();
+ 
+@@ -709,10 +710,11 @@ namespace Resource
+         ResourceManager::updateCache(referenceTime);
+ 
+         mInstanceCache->removeUnreferencedObjectsInCache();
+-
++        #if 0
+         mSharedStateMutex.lock();
+         mSharedStateManager->prune();
+         mSharedStateMutex.unlock();
++        #endif
+     }
+ 
+     void SceneManager::clearCache()

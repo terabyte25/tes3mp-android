@@ -5,7 +5,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
 export ARCH="arm"
-export CCACHE="false"
+export CCACHE="true"
 ASAN="false"
 LTO="false"
 BUILD_TYPE="release"
@@ -200,7 +200,7 @@ find ./toolchain/$ARCH/ -iname "libc++_shared.so" -exec cp "{}" ../app/src/main/
 	mkdir -p "$DST/openmw/"
 	# cp "$SRC/settings-default.cfg" "$DST/openmw/" for now
 	cp "$SRC/gamecontrollerdb.txt" "$DST/openmw/"
-	cp "$SRC/tes3mp-client-default.cfg" "$DST/openmw/"
+	cp "$SRCTES3MP/tes3mp-client-default.cfg" "$DST/openmw/"
 	cp "$DIR/../app/settings-default.cfg" "$DST/openmw/"
 
 	# local config

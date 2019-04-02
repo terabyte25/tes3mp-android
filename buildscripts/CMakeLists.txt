@@ -472,8 +472,9 @@ set(OPENMW_PATCH
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw-revert-ui-dimensions.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw-add-simpler-collisions-option.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw-shadows-red-sky.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/freetype.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0001-loadingscreen-disable-for-now.patch &&
-	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0002-scenemanager-disable-state-share-inc-compile.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0002-scenemanager-disable-state-share-inc-compile-openmw.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0003-globalmap-fix-race-vs-savegame-load.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0004-getUVBuffer-pre-set-array-binding-to-avoid-thread-ra.patch
 )
@@ -489,9 +490,8 @@ set(TES3MP_PATCH
 ExternalProject_Add(openmw_osg_mainline
 	DEPENDS boost openal osg_mainline mygui ffmpeg sdl2 bullet
 
-	URL https://github.com/OpenMW/openmw/archive/${OPENMW_VERSION}.tar.gz
-	URL_HASH ${OPENMW_HASH}
-	DOWNLOAD_DIR ${download_dir}
+	GIT_REPOSITORY https://github.com/openmw/openmw.git
+	GIT_TAG master
 
 	PATCH_COMMAND ${OPENMW_PATCH}
 
@@ -516,9 +516,8 @@ ExternalProject_Add(openmw_osg_mainline
 ExternalProject_Add(openmw_osg_fork
 	DEPENDS boost openal osg_fork mygui ffmpeg sdl2 bullet
 
-	URL https://github.com/OpenMW/openmw/archive/${OPENMW_VERSION}.tar.gz
-	URL_HASH ${OPENMW_HASH}
-	DOWNLOAD_DIR ${download_dir}
+	GIT_REPOSITORY https://github.com/openmw/openmw.git
+	GIT_TAG master
 
 	PATCH_COMMAND ${OPENMW_PATCH}
 
@@ -544,7 +543,7 @@ ExternalProject_Add(tes3mp_osg_mainline
 	DEPENDS boost openal osg_mainline mygui ffmpeg sdl2 bullet raknet
 
 	GIT_REPOSITORY https://github.com/tes3mp/openmw-tes3mp.git
-	GIT_TAG ${TES3MP_VERSION}
+	GIT_TAG 0.7.0
 
 	PATCH_COMMAND ${TES3MP_PATCH}
 
@@ -570,7 +569,7 @@ ExternalProject_Add(tes3mp_osg_fork
 	DEPENDS boost openal osg_fork mygui ffmpeg sdl2 bullet raknet
 
 	GIT_REPOSITORY https://github.com/tes3mp/openmw-tes3mp.git
-	GIT_TAG ${TES3MP_VERSION}
+	GIT_TAG 0.7.0
 
 	PATCH_COMMAND ${TES3MP_PATCH}
 
