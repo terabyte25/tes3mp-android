@@ -10,11 +10,12 @@ import org.libsdl.app.SDLActivity
 class OskTouchListener(val btn: OskButton): View.OnTouchListener {
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
+        v.getParent().requestDisallowInterceptTouchEvent(true)
         when (event.action) {
             MotionEvent.ACTION_DOWN -> btn.pressed()
             MotionEvent.ACTION_UP -> btn.released()
         }
-
+        v.getParent().requestDisallowInterceptTouchEvent(false)
         return true
     }
 
