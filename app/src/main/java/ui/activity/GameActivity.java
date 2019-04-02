@@ -116,8 +116,6 @@ public class GameActivity extends SDLActivity {
             RelativeLayout layout = getLayout();
             Osc osc = new Osc(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("multiplayer", false));
             osc.placeElements(layout);
-            getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(visibility -> osc.relayout());
-            layout.post(() -> osc.relayout());
         }
         cursor = new MouseCursor(this);
     }
