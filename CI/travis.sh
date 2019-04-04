@@ -2,6 +2,9 @@
 
 set -e
 
-./buildscripts/full-build.sh
+cd buildscripts
+./full-build.sh
+
+cd ..
 
 ./gradlew assembleDebug
