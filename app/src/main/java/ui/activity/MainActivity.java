@@ -39,6 +39,7 @@ import java.io.InputStreamReader;
 import constants.Constants;
 import file.utils.CopyFilesFromAssets;
 import ui.fragments.FragmentBrowser;
+import ui.fragments.FragmentPlugins;
 import ui.game.GameState;
 import ui.fragments.FragmentControls;
 import ui.fragments.FragmentSettings;
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private enum TEXT_MODE {DATA_PATH, COMMAND_LINE}
     private static TEXT_MODE editTextMode;
     private ConfigsFileStorageHelper configsFileStorageHelper;
+    private FragmentPlugins fragmentPlugins = new FragmentPlugins();
 
     public static int resolutionX = 0;
     public static int resolutionY = 0;
@@ -133,12 +135,12 @@ public class MainActivity extends AppCompatActivity {
                         startGame();
                         return true;
 
-//                    case R.id.plugins:
-//                        showOverflowMenu(true);
-//                        isSettingsEnabled = false;
-//                        disableToolBarViews();
-//                        MainActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new FragmentPlugins()).commit();
-//                        return true;
+                    case R.id.plugins:
+                        showOverflowMenu(true);
+                        disableToolBarViews();
+                        MainActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragmentPlugins).commit();
+                        return true;
+
                     case R.id.controls:
                         showOverflowMenu(false);
                         disableToolBarViews();
@@ -219,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
         if (fileOrDirectory.isDirectory())
             for (File child : fileOrDirectory.listFiles())
                 deleteRecursive(child);
-
+        if (fileOrDirectory.getName().contains("openmw.cfg")) return;
         fileOrDirectory.delete();
     }
 
@@ -302,6 +304,7 @@ public class MainActivity extends AppCompatActivity {
 
         Thread th = new Thread(() -> {
             try {
+                if (fragmentPlugins.isInView ) fragmentPlugins.savePluginsDataToDisk();
                 File openmwCfg = new File(OPENMW_CFG);
                 File settingsCfg = new File(SETTINGS_CFG);
                 if (!openmwCfg.exists() || !settingsCfg.exists()) {
