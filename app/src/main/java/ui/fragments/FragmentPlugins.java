@@ -3,6 +3,7 @@ package ui.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -130,7 +131,7 @@ public class FragmentPlugins extends Fragment {
     public void showDependenciesDialog(final int pos) {
         String dependencies = "";
         try {
-            dependencies = PluginReader.read(Constants.APPLICATION_DATA_STORAGE_PATH + "/"
+            dependencies = PluginReader.read(PreferenceManager.getDefaultSharedPreferences(this.getActivity()).getString("data_files", "") + "/"
                     + pluginsStorage.getPluginsList().get(pos).name);
         } catch (IOException e) {
             e.printStackTrace();
