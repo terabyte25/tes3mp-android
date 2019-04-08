@@ -130,7 +130,7 @@ public class PluginsStorage {
 
     public void savePlugins() {
         try {
-            boolean needRegisterBsaFiles = false; //BsaUtils.getSaveAllBsaFilesValue(activity);
+            boolean needRegisterBsaFiles = BsaUtils.getSaveAllBsaFilesValue(activity);
             BsaUtils bsaUtils = new BsaUtils(dataPath);
             StringBuilder stringBuilder = new StringBuilder();
             for (PluginInfo pluginInfo : pluginsList) {
