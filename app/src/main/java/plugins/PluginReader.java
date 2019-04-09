@@ -51,6 +51,11 @@ public class PluginReader {
 				break;
 			line = reader.readLine();
 		}
+
+		if (path.contains("Bloodmoon.esm")) {
+			builder.append("Tribunal.esm \n");
+		}
+		
 		reader.close();
 		return builder.toString();
 	}

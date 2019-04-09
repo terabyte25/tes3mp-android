@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import file.utils.FileUtils;
 import parser.json.JsonReader;
 import file.ConfigsFileStorageHelper;
 import plugins.bsa.BsaUtils;
+import plugins.PluginReader;
 import utils.Utils;
 
 /**
@@ -89,12 +91,62 @@ public class PluginsStorage {
     }
 
     private void sortPlugins() {
-        Collections.sort(pluginsList, (p1, p2) -> Boolean.compare(p1.isPluginEsp, p2.isPluginEsp));
-        for (PluginInfo plugin : pluginsList) {
-            if (plugin.name.equals("Morrowind.esm")) {
-                pluginsList.remove(plugin);
-                pluginsList.add(0, plugin);
+        // Alphabet sort
+        Collections.sort(pluginsList,
+            new Comparator<PluginInfo>()
+            {
+                public int compare(PluginInfo f1, PluginInfo f2)
+                {
+                    String fullname1 = f1.name + f1.pluginExtension;
+                    String fullname2 = f2.name + f2.pluginExtension;
+                    return fullname1.toLowerCase().compareTo(fullname2.toLowerCase());
+                }        
+            });
+                 
+        boolean movedFiles = true;
+        int fileCount = pluginsList.size();
+
+        //Dependency sort
+        //iterate until no sorting of files occurs
+        try {
+            while (movedFiles)
+            {
+                movedFiles = false;
+                //iterate each file, obtaining a reference to it's gamefiles list
+                for (int i = 0; i < fileCount; i++)
+                {
+                    String gamefiles = PluginReader.read(PreferenceManager.getDefaultSharedPreferences(activity).getString("data_files", "") + "/" + pluginsList.get(i).name);
+                    //iterate each file after the current file, verifying that none of it's
+                    //dependencies appear.
+                    for (int j = i + 1; j < fileCount; j++)
+                    {
+                        if (gamefiles.contains(pluginsList.get(j).name)
+                        || (gamefiles.isEmpty()
+                        && pluginsList.get(j).name.contains("Morrowind.esm"))) // Hack: implicit dependency on Morrowind.esm for dependency-less files
+                        {
+                                move(pluginsList, j, i);
+
+                                movedFiles = true;
+                        }
+                    }
+                    if (movedFiles)
+                        break;
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Collections.sort(pluginsList, (p1, p2) -> Boolean.compare(p1.isPluginEsp, p2.isPluginEsp));
+    }
+
+    // https://stackoverflow.com/questions/36011356/moving-elements-in-arraylist-java
+    private void move(List myList, int fromPosition, int toPosition) {
+        if (fromPosition < toPosition) {
+            myList.add(toPosition, myList.get(fromPosition));
+            myList.remove(fromPosition);
+        } else {
+            myList.add(toPosition, myList.get(fromPosition));
+            myList.remove(fromPosition + 1);
         }
     }
 
