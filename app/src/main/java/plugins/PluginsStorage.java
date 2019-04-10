@@ -2,7 +2,6 @@ package plugins;
 
 import android.app.Activity;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -71,8 +70,8 @@ public class PluginsStorage {
     }
 
     private void addNewFiles() throws JSONException, IOException {
-        File[] files = dataDir.listFiles((d, name) -> name.endsWith(".ESM") || name.endsWith(".ESP") || name.endsWith(".esp") || name.endsWith(".esm") ||
-                name.endsWith(".omwgame") || name.endsWith(".omwaddon"));
+        File[] files = dataDir.listFiles((d, name) -> name.toLowerCase().endsWith(".esp") || name.toLowerCase().endsWith(".esm") ||
+                name.toLowerCase().endsWith(".omwgame") || name.toLowerCase().endsWith(".omwaddon"));
         boolean isFileAdded = false;
         for (File f : files) {
             if (!isListContainsFile(f)) {
@@ -97,8 +96,8 @@ public class PluginsStorage {
             {
                 public int compare(PluginInfo f1, PluginInfo f2)
                 {
-                    String fullname1 = f1.name + f1.pluginExtension;
-                    String fullname2 = f2.name + f2.pluginExtension;
+                    String fullname1 = f1.name;
+                    String fullname2 = f2.name;
                     return fullname1.toLowerCase().compareTo(fullname2.toLowerCase());
                 }        
             });
