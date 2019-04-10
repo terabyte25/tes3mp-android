@@ -14,6 +14,9 @@ public class PluginReader {
 		String line = reader.readLine();
 		StringBuilder builder = new StringBuilder();
 
+		if (!line.contains("TES3")) // make sure this actually is a real TES3 data file
+			return "";
+
 		while (line != null) {
 			int count = line.split("MAST").length;
 			if (count > 0)
@@ -44,7 +47,8 @@ public class PluginReader {
 						}
 
 					} catch (Exception e) {
-
+						reader.close();
+						return builder.toString();
 					}
 				}
 			if (line.contains("NAME"))
