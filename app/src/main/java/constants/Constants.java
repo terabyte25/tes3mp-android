@@ -13,6 +13,7 @@ public class Constants {
 	public static final String COMMAND_LINE = "commandline";
 	public static final String TOUCH_SENSITIVITY= "camera sensitivity";
 	public static final String CAMERA_MULTIPLISER = "camera y multiplier";
+	public static final String MOUSE_TRANSPARENCY = "mouse transparency";
 	public static String commandLineData = "";
 
 	public static String APPLICATION_DATA_STORAGE_PATH ="";

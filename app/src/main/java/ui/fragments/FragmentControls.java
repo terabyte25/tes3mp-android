@@ -37,8 +37,9 @@ public class FragmentControls extends Fragment {
         changeTextViewSizes(rootView);
         int cameraStartPos = (int) (Settings.getFloat(Constants.CAMERA_MULTIPLISER, 2.0f)  );
         int touchStartPos = (int) (Settings.getFloat(Constants.TOUCH_SENSITIVITY, 0.01f) * 1000f);
+        int mouseStartPos = (int) (Settings.getFloat(Constants.MOUSE_TRANSPARENCY, 100.0f)  );
 
-        findViews(rootView, cameraStartPos, touchStartPos, Constants.TOUCH_SENSITIVITY, Constants.CAMERA_MULTIPLISER);
+        findViews(rootView, cameraStartPos, touchStartPos, mouseStartPos, Constants.TOUCH_SENSITIVITY, Constants.CAMERA_MULTIPLISER, Constants.MOUSE_TRANSPARENCY);
 
         return rootView;
     }
@@ -57,7 +58,7 @@ public class FragmentControls extends Fragment {
 
     }
 
-    private void findViews(View rootView, int cameraStartPos, int touchStartPos, String touchPrefKey, String cameraPrefKey) {
+    private void findViews(View rootView, int cameraStartPos, int touchStartPos, int mouseStartPos, String touchPrefKey, String cameraPrefKey, String mousePrefKey) {
         SeekBar touchSeekBar = (SeekBar) rootView.findViewById(R.id.touchBar);
         TextView touchProgress = (TextView) rootView.findViewById(R.id.touchValue);
         addSeekBarListener(touchSeekBar, touchStartPos, 100, 1000, touchProgress, touchPrefKey);
@@ -65,6 +66,10 @@ public class FragmentControls extends Fragment {
         SeekBar cameraSeekBar = (SeekBar) rootView.findViewById(R.id.cameraBar);
         TextView cameraProgress = (TextView) rootView.findViewById(R.id.cameraValue);
         addSeekBarListener(cameraSeekBar, cameraStartPos, 10, 1, cameraProgress, cameraPrefKey);
+
+        SeekBar mouseSeekBar = (SeekBar) rootView.findViewById(R.id.mouseBar);
+        TextView mouseProgress = (TextView) rootView.findViewById(R.id.mouseValue);
+        addSeekBarListener(mouseSeekBar, mouseStartPos, 100, 1, mouseProgress, mousePrefKey);
 
     }
 
