@@ -46,6 +46,12 @@ public class PluginsStorage {
     public void loadPlugins(String path) {
 
         try {
+            File json = new File(path);
+            if (json.exists()) {
+                String jsonDataPath = JsonReader.getPluginsPath(path);
+                if (jsonDataPath != dataPath)
+                    json.delete();
+            }
             pluginsList = JsonReader.loadFile(path);
             removeDeletedFiles();
             addNewFiles();
@@ -173,7 +179,7 @@ public class PluginsStorage {
     public void saveJson(final String path) {
         String finalPath = path.isEmpty() ? JSON_FILE_LOCATION : path;
         try {
-            JsonReader.saveFile(pluginsList, finalPath);
+            JsonReader.saveFile(pluginsList, finalPath, dataPath);
         } catch (Exception e) {
             e.printStackTrace();
         }

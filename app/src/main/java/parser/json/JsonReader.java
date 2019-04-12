@@ -20,9 +20,12 @@ public class JsonReader {
     private static final String PLUGIN_ENABLED_KEY = "enabled";
     private static final String FILE_EXTENSION = "extension";
     private static final String IS_PLUGIN_ESP_KEY = "isPluginEsp";
+    private static final String DATA_KEY = "dataPath";
+    private static final String PLUGINS_KEY = "plugins";
 
-    public static void saveFile(List<PluginInfo> loadedFile, String path)
+    public static void saveFile(List<PluginInfo> loadedFile, String path, String dataPath)
             throws JSONException, IOException {
+        JSONObject mainObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         for (int i = 0; i < loadedFile.size(); i++) {
             JSONObject c = new JSONObject();
@@ -33,7 +36,9 @@ public class JsonReader {
             c.put(PLUGIN_ENABLED_KEY, loadedFile.get(i).enabled);
             jsonArray.put(c);
         }
-       FileUtils.saveDataToFile(jsonArray.toString(),path,false);
+        mainObject.put(DATA_KEY, dataPath);
+        mainObject.put(PLUGINS_KEY, jsonArray);
+        FileUtils.saveDataToFile(mainObject.toString(),path,false);
     }
 
     public static String convertStreamToString(InputStream is)
@@ -71,7 +76,8 @@ public class JsonReader {
     public static List<PluginInfo> loadFile(String jsonFilePath) {
         List<PluginInfo> ret = new ArrayList<PluginInfo>();
         try {
-            JSONArray jsonArray = new JSONArray(getJsonString(jsonFilePath));
+            JSONObject jsonObject = new JSONObject(getJsonString(jsonFilePath));
+            JSONArray jsonArray = jsonObject.getJSONArray(PLUGINS_KEY);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject obj = jsonArray.getJSONObject(i);
                 PluginInfo ti = new PluginInfo();
@@ -87,6 +93,18 @@ public class JsonReader {
             return new ArrayList<PluginInfo>();
         }
         return ret;
+    }
+
+    public static String getPluginsPath(String jsonFilePath) {
+        String data;
+        try {
+            JSONObject jsonObject = new JSONObject(getJsonString(jsonFilePath));
+            data = jsonObject.getString(DATA_KEY);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+        return data;
     }
 
 }
