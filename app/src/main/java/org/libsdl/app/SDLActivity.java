@@ -28,6 +28,7 @@ import android.hardware.*;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ApplicationInfo;
+import android.text.method.ScrollingMovementMethod;
 
 import ui.activity.MainActivity;
 
@@ -974,6 +975,7 @@ public class SDLActivity extends Activity {
         // create text
 
         TextView message = new TextView(this);
+        message.setMovementMethod(new ScrollingMovementMethod());
         message.setGravity(Gravity.CENTER);
         message.setText(args.getString("message"));
         if (textColor != Color.TRANSPARENT) {

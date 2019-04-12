@@ -3,6 +3,7 @@ package ui.controls
 import android.content.Context
 import android.graphics.Color
 import android.preference.PreferenceManager
+import android.util.Log
 import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -350,7 +351,7 @@ class Osc(
         }
         osk.placeElements(target)
 
-        target.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> relayout() }
+        target.addOnLayoutChangeListener { v, l, t, r, b, ol, ot, or, ob -> relayout(l, t, r, b, ol, ot, or, ob) }
     }
 
     fun toggleKeyboard() {
@@ -372,7 +373,7 @@ class Osc(
             element.loadPrefs(target.context)
         }
 
-        target.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> relayout() }
+        target.addOnLayoutChangeListener { v, l, t, r, b, ol, ot, or, ob -> relayout(l, t, r, b, ol, ot, or, ob) }
     }
 
     fun resetElements(ctx: Context) {
@@ -381,7 +382,10 @@ class Osc(
         }
     }
 
-    private fun relayout() {
+    private fun relayout(l: Int, t: Int, r: Int, b: Int, ol: Int, or: Int, ot: Int, ob: Int) {
+        // don't do anything if layout didn't change
+        if (l == ol && t == ot && r == or && b == ob)
+            return
         for (element in elements) {
             element.updateView()
         }
