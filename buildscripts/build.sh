@@ -209,6 +209,8 @@ find ./toolchain/$ARCH/ -iname "libc++_shared.so" -exec cp "{}" ../app/src/main/
 	cp "$SRC/gamecontrollerdb.txt" "$DST/config/openmw/"
 	cp "$DIR/../app/openmw-base.cfg" "$DST/config/openmw/openmw.cfg"
 	cp "$DIR/../app/settings-base.cfg" "$DST/config/openmw/settings.cfg"
+	# not really a good idea to fake commit hashes for tes3mp
+	cp "$DIR/../app/version" "$DST/tes3mp-resources/version"
 
 echo "==> Making your debugging life easier"
 
