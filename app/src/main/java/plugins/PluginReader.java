@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class PluginReader {
-
+	
 	public static String read(String path) throws IOException {
+
+		int lineNum = 0;
 
 		FileInputStream file = new FileInputStream(path);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(file));
@@ -17,7 +19,7 @@ public class PluginReader {
 		if (!line.contains("TES3")) // make sure this actually is a real TES3 data file
 			return "";
 
-		while (line != null) {
+		while (line != null || lineNum < 5) {
 			int count = line.split("MAST").length;
 			if (count > 0)
 				for (int i = 0; i < count; i++) {
@@ -54,6 +56,7 @@ public class PluginReader {
 			if (line.contains("NAME"))
 				break;
 			line = reader.readLine();
+			lineNum++;
 		}
 
 		if (path.contains("Bloodmoon.esm")) {

@@ -47,11 +47,12 @@ public class PluginsStorage {
 
         try {
             File json = new File(path);
+            /**
             if (json.exists()) {
                 String jsonDataPath = JsonReader.getPluginsPath(path);
-                if (jsonDataPath != dataPath)
+                if (jsonDataPath.replace("\\","") != dataPath)
                     json.delete();
-            }
+            */
             pluginsList = JsonReader.loadFile(path);
             removeDeletedFiles();
             addNewFiles();
