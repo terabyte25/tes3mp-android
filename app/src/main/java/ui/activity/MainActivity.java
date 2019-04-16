@@ -46,6 +46,7 @@ import permission.PermissionHelper;
 import ui.screen.ScreenScaler;
 import file.ConfigsFileStorageHelper;
 import prefs.PreferencesHelper;
+import plugins.bsa.BsaUtils;
 
 import static file.ConfigsFileStorageHelper.CONFIGS_FILES_STORAGE_PATH;
 import static file.ConfigsFileStorageHelper.OPENMW_CFG;
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     public TextView path;
     public Button browseButton;
     private Menu menu;
-    private boolean isSettingsEnabled = true;
+    private int isSettingsEnabled = 0;
     private static final int REQUEST_PATH = 1;
     private SharedPreferences prefs;
     private SharedPreferences Settings;
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
         PermissionHelper.getWriteExternalStoragePermission(MainActivity.this);
-        isSettingsEnabled = true;
+        isSettingsEnabled = 0;
         setContentView(R.layout.main);
         PreferencesHelper.getPrefValues(this);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -133,12 +134,13 @@ public class MainActivity extends AppCompatActivity {
                         startGame();
                         return true;
 
-//                    case R.id.plugins:
-//                        showOverflowMenu(true);
-//                        isSettingsEnabled = false;
-//                        disableToolBarViews();
-//                        MainActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new FragmentPlugins()).commit();
-//                        return true;
+                    case R.id.plugins:
+                        showOverflowMenu(true);
+                        isSettingsEnabled = 2;
+                        disableToolBarViews();
+                        MainActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragmentPlugins).commit();
+                        return true;
+
                     case R.id.controls:
                         showOverflowMenu(false);
                         disableToolBarViews();
@@ -148,13 +150,13 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.settings:
                         disableToolBarViews();
                         showOverflowMenu(true);
-                        isSettingsEnabled = true;
+                        isSettingsEnabled = 0;
                         MainActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new FragmentSettings()).commit();
 
                         return true;
                     case R.id.browser:
                         showOverflowMenu(true);
-                        isSettingsEnabled = false;
+                        isSettingsEnabled = 1;
                         disableToolBarViews();
                         MainActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new FragmentBrowser(MainActivity.this)).commit();
 
@@ -383,23 +385,46 @@ public class MainActivity extends AppCompatActivity {
         this.menu = menu;
         menu.clear();
         MenuInflater inflater = getMenuInflater();
-        if (isSettingsEnabled)
+        if (isSettingsEnabled == 0)
             inflater.inflate(R.menu.menu_settings, menu);
-        else
+        else if (isSettingsEnabled == 1)
             inflater.inflate(R.menu.menu_browser, menu);
+        else // isSettingsEnabled == 2
+            inflater.inflate(R.menu.menu_plugins, menu);
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (!isSettingsEnabled)
+        if (isSettingsEnabled == 1)
             switch (id) {
                 case R.id.action_sortPlayers:
                     FragmentBrowser.sortPlayers();
                     break;
                 case R.id.action_sortAlphabet:
                     FragmentBrowser.sortAlphabet();
+                    break;
+                default:
+                    break;
+            }
+        else if (isSettingsEnabled == 2) 
+            switch (id) {
+                case R.id.action_enable:
+                    if (FragmentPlugins.getInstance()!=null) {
+                        FragmentPlugins.getInstance().enableMods();
+                    }
+                    break;
+                case R.id.action_disable:
+                    if (FragmentPlugins.getInstance()!=null) {
+                        FragmentPlugins.getInstance().disableMods();
+                    }
+                    break;
+                case R.id.action_enableBsa:
+                    BsaUtils.setSaveAllBsaFilesValue(MainActivity.this,true);
+                    break;
+                case R.id.action_disableBsa:
+                    BsaUtils.setSaveAllBsaFilesValue(MainActivity.this,false);
                     break;
                 default:
                     break;
