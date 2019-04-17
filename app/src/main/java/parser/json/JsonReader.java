@@ -20,6 +20,7 @@ public class JsonReader {
     private static final String PLUGIN_ENABLED_KEY = "enabled";
     private static final String FILE_EXTENSION = "extension";
     private static final String IS_PLUGIN_ESP_KEY = "isPluginEsp";
+    private static final String GAME_FILES_KEY = "gameFiles";
     private static final String DATA_KEY = "dataPath";
     private static final String PLUGINS_KEY = "plugins";
 
@@ -31,6 +32,7 @@ public class JsonReader {
             JSONObject c = new JSONObject();
             c.put(NAME_PLUGIN_KEY, loadedFile.get(i).name);
             c.put(NAME_BSA_KEY, loadedFile.get(i).nameBsa);
+            c.put(GAME_FILES_KEY, loadedFile.get(i).gameFiles);
             c.put(FILE_EXTENSION, loadedFile.get(i).pluginExtension);
             c.put(IS_PLUGIN_ESP_KEY, loadedFile.get(i).isPluginEsp);
             c.put(PLUGIN_ENABLED_KEY, loadedFile.get(i).enabled);
@@ -83,6 +85,7 @@ public class JsonReader {
                 PluginInfo ti = new PluginInfo();
                 ti.name = obj.getString(NAME_PLUGIN_KEY);
                 ti.nameBsa = obj.getString(NAME_BSA_KEY);
+                ti.gameFiles = obj.getString(GAME_FILES_KEY);
                 ti.enabled = obj.getBoolean(PLUGIN_ENABLED_KEY);
                 ti.pluginExtension = obj.getString(FILE_EXTENSION);
                 ti.isPluginEsp = obj.getBoolean(IS_PLUGIN_ESP_KEY);

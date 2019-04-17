@@ -86,6 +86,7 @@ public class PluginsStorage {
                 PluginInfo pluginData = new PluginInfo();
                 pluginData.name = f.getName();
                 pluginData.nameBsa = f.getName().split("\\.")[0] + ".bsa";
+                pluginData.gameFiles = PluginReader.read(dataPath + "/" + pluginData.name);
                 pluginData.isPluginEsp = f.getName().endsWith(".ESP") || f.getName().endsWith(".esp");
                 pluginData.pluginExtension = FileUtils.getFileName(f.getName(), true);
                 pluginsList.add(pluginData);
@@ -114,33 +115,29 @@ public class PluginsStorage {
 
         //Dependency sort
         //iterate until no sorting of files occurs
-        try {
-            while (movedFiles)
+        while (movedFiles)
+        {
+            movedFiles = false;
+            //iterate each file, obtaining a reference to it's gamefiles list
+            for (int i = 0; i < fileCount; i++)
             {
-                movedFiles = false;
-                //iterate each file, obtaining a reference to it's gamefiles list
-                for (int i = 0; i < fileCount; i++)
+                String gamefiles = pluginsList.get(i).gameFiles;
+                //iterate each file after the current file, verifying that none of it's
+                //dependencies appear.
+                for (int j = i + 1; j < fileCount; j++)
                 {
-                    String gamefiles = PluginReader.read(PreferenceManager.getDefaultSharedPreferences(activity).getString("data_files", "") + "/" + pluginsList.get(i).name);
-                    //iterate each file after the current file, verifying that none of it's
-                    //dependencies appear.
-                    for (int j = i + 1; j < fileCount; j++)
+                    if (gamefiles.contains(pluginsList.get(j).name)
+                    || (gamefiles.isEmpty()
+                    && pluginsList.get(j).name.contains("Morrowind.esm"))) // Hack: implicit dependency on Morrowind.esm for dependency-less files
                     {
-                        if (gamefiles.contains(pluginsList.get(j).name)
-                        || (gamefiles.isEmpty()
-                        && pluginsList.get(j).name.contains("Morrowind.esm"))) // Hack: implicit dependency on Morrowind.esm for dependency-less files
-                        {
-                                move(pluginsList, j, i);
+                            move(pluginsList, j, i);
 
-                                movedFiles = true;
-                        }
+                            movedFiles = true;
                     }
-                    if (movedFiles)
-                        break;
                 }
+                if (movedFiles)
+                    break;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         Collections.sort(pluginsList, (p1, p2) -> Boolean.compare(p1.isPluginEsp, p2.isPluginEsp));
     }
