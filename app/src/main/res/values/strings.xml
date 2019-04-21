@@ -47,6 +47,7 @@
     <string name="pref_ui">User interface</string>
     <string name="pref_uiScaling">GUI scaling factor</string>
     <string name="pref_touchpadSensitivity">Virtual touchpad sensitivity</string>
+    <string name="pref_viewingDistance">Viewing distance</string>
     <string name="action_reset_config">Reset configuration files</string>
     <string name="action_reset_screen_controls">Reset on-screen controls</string>
     <string name="action_show_screen_controls">Configure on-screen controls</string>
@@ -114,6 +115,20 @@
         <item>false</item>
     </string-array>
     <string name="pref_preload_default">false</string>
+
+    <string name="pref_distantTerrain">Distant Terrain</string>
+    <string-array name="pref_distantTerrain_entries">
+        <item>Enabled</item>
+        <item>Disabled</item>
+    </string-array>
+    <string-array name="pref_distantTerrain_values">
+        <item>true</item>
+        <item>false</item>
+    </string-array>
+    <string name="pref_distantTerrain_default">false</string>
+
+    <string name="pref_viewingDistance_default">2000.0</string>
+
     <string name="btn_back">Back</string>
     <string name="pref_customResolution">Custom resolution</string>
 

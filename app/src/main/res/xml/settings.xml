@@ -121,6 +121,24 @@
             android:summary="%s"
             />
 
+        <EditTextPreference
+            android:key="pref_viewingDistance"
+            android:title="@string/pref_viewingDistance"
+            android:dialogTitle="@string/pref_viewingDistance"
+            android:defaultValue="@string/pref_viewingDistance_default"
+            android:inputType="numberDecimal"
+            />
+        
+        <ListPreference
+            android:key="pref_distantTerrain"
+            android:title="@string/pref_distantTerrain"
+            android:dialogTitle="@string/pref_distantTerrain"
+            android:entries="@array/pref_distantTerrain_entries"
+            android:entryValues="@array/pref_distantTerrain_values"
+            android:defaultValue="@string/pref_distantTerrain_default"
+            android:summary="%s"
+            />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

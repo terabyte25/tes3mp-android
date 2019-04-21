@@ -337,6 +337,10 @@ public class MainActivity extends AppCompatActivity {
 
                 file.Writer.write(prefs.getString("pref_preload", "false"), SETTINGS_CFG, "preload enabled");
 
+                file.Writer.write(prefs.getString("pref_viewingDistance", "2000"), SETTINGS_CFG, "viewing distance");
+
+                file.Writer.write(prefs.getString("pref_distantTerrain", "false"), SETTINGS_CFG, "distant terrain");
+
                 runOnUiThread(() -> {
                     obtainScreenResolution();
                     dialog.hide();
