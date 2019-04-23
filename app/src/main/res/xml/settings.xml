@@ -25,6 +25,11 @@
             android:title="Screen" />
 
         <CheckBoxPreference
+            android:key="touchControl"
+            android:summary="Change between touch control and cursor mode"
+            android:title="Touch Control" />
+
+        <CheckBoxPreference
             android:key="multiplayer"
             android:summary="Change between Singleplayer and Multiplayer mode"
             android:title="Multiplayer" />

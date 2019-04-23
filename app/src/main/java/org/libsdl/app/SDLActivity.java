@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import android.app.*;
 import android.content.*;
 import android.content.res.Configuration;
+import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.view.*;
 import android.view.inputmethod.BaseInputConnection;
@@ -1155,7 +1156,8 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         setFocusableInTouchMode(true);
         requestFocus();
         setOnKeyListener(this);
-//        setOnTouchListener(this);
+        if (PreferenceManager.getDefaultSharedPreferences(SDL.getContext()).getBoolean("touchControl", false))
+            setOnTouchListener(this);
 
         mDisplay = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         mSensorManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
@@ -1200,7 +1202,8 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         setFocusableInTouchMode(true);
         requestFocus();
         setOnKeyListener(this);
-//        setOnTouchListener(this);
+        if (PreferenceManager.getDefaultSharedPreferences(SDL.getContext()).getBoolean("touchControl", false))
+            setOnTouchListener(this);
         enableSensor(Sensor.TYPE_ACCELEROMETER, true);
     }
 

@@ -3,6 +3,7 @@ package cursor;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.view.Choreographer;
 import android.view.View;
@@ -25,12 +26,18 @@ public class MouseCursor implements Choreographer.FrameCallback {
 
     private SharedPreferences Settings;
 
+    private boolean touchcontrol = false;
+
     public MouseCursor(GameActivity activity) {
         Settings = activity.getSharedPreferences(
                 Constants.APP_PREFERENCES, Context.MODE_PRIVATE);
+
+        touchcontrol = PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("touchControl", false);
         
         cursor = new ImageView(activity);
-        cursor.setImageResource(R.drawable.pointer_arrow);
+        if (!touchcontrol)
+            cursor.setImageResource(R.drawable.pointer_arrow);
+
         Resources r = activity.getResources();
         int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, r.getDisplayMetrics());
         cursor.setLayoutParams(new RelativeLayout.LayoutParams((int) Math.round(px / 1.5), px));
@@ -43,16 +50,22 @@ public class MouseCursor implements Choreographer.FrameCallback {
 
         float alpha = Settings.getFloat(Constants.MOUSE_TRANSPARENCY, 100.0f);
 
-        cursor.setAlpha((alpha / 100.0f)); // currently deprecated
+        cursor.setAlpha((alpha / 100.0f));
 
     }
 
     @Override
     public void doFrame(long frameTimeNanos) {
         if (SDLActivity.isMouseShown() == 0) {
-            cursor.setVisibility(View.GONE);
+            if (!touchcontrol)
+                cursor.setVisibility(View.GONE);
+            else 
+                GameActivity.osc.disableElements(false);
         } else {
-            cursor.setVisibility(View.VISIBLE);
+            if (!touchcontrol)
+                cursor.setVisibility(View.VISIBLE);
+            else 
+                GameActivity.osc.disableElements(true);
 
             View surface = SDLActivity.getSurface();
 

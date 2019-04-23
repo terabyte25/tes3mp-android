@@ -369,6 +369,19 @@ class Osc(
         }
     }
 
+    fun disableElements(disable: Boolean) {
+        if (keyboardVisible)
+            return
+        
+        for (element in elements) {
+            if (element == keyboardButton || element.uniqueId == "chat" || element.uniqueId == "pause" || element.uniqueId == "inventory" || element.uniqueId == "shift")
+                continue
+            if (!disable && element is OscHiddenButton && element !is OscHiddenToggle)
+                continue
+            element.view?.visibility = if (disable) View.GONE else View.VISIBLE
+        }
+    }
+
     fun placeConfigurableElements(target: RelativeLayout, listener: View.OnTouchListener) {
         for (element in elements) {
             element.placeConfigurable(target, listener)
