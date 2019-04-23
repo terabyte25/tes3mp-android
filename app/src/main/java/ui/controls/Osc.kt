@@ -308,6 +308,8 @@ class Osc(
         keyboardButton,
         OscImageButton("use", R.drawable.use, 940, 368, KeyEvent.KEYCODE_SPACE),
 
+        OscImageButton("shift", R.drawable.del, 140, 0, KeyEvent.KEYCODE_SHIFT_LEFT),
+
         OscJoystickLeft("joystickLeft", 75, 400, 170, 0),
         OscJoystickRight("joystickRight", 650, 400, 170, 1)
     )

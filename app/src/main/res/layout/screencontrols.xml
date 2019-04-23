@@ -327,6 +327,16 @@
             android:scaleType="fitCenter"
             android:src="@drawable/use" />
 
+        <ImageButton
+            android:id="@+id/buttonshift"
+            android:layout_width="50dip"
+            android:layout_height="50dip"
+            android:background="@null"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/del" />
+
         <Button
             android:id="@+id/buttonsize1"
             android:layout_width="50dip"
