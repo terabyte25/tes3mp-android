@@ -2,7 +2,7 @@
 
 
 ## Notes from fork maintainer
-This is forked from xyzz/openmw-android, and implements support for tes3mp. All credits go to the tes3mp team and OpenMW team for making this possible, as well as Schnibbsel for helping me test it. If there are any questions please feel free to ask in the issues tab. Also feel free to report any abnormalities in the Issues tab as well.
+This is forked from xyzz/openmw-android, and implements support for tes3mp. All credits go to the tes3mp team and OpenMW team for making this possible, as well as Schnibbsel for helping me test it. If there are any questions please feel free to ask in the issues tab. Also feel free to report any abnormalities in the Issues tab as well. Credits to Texafornian for the icon used currently.
 
 **THIS IS NOT THE WORK OF ANY OFFICIAL OPENMW OR TES3MP MEMBERS**
 
