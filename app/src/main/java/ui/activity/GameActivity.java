@@ -42,8 +42,6 @@ public class GameActivity extends SDLActivity {
 
     public static native void commandLine(int argc, String[] argv);
 
-    public static Osc osc;
-
     private boolean hideControls = false;
     private boolean touchControls = false;
 
@@ -116,12 +114,13 @@ public class GameActivity extends SDLActivity {
 
     private void showControls() {
         hideControls = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.HIDE_CONTROLS, false);
+        Osc osc = null;
         if (!hideControls) {
             RelativeLayout layout = getLayout();
             osc = new Osc(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("multiplayer", false));
             osc.placeElements(layout);
         }
-        cursor = new MouseCursor(this);
+        cursor = new MouseCursor(this, osc);
     }
 
     private void KeepScreenOn() {

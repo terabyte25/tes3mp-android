@@ -28,6 +28,7 @@ const val VIRTUAL_SCREEN_HEIGHT = 768
  */
 open class OscElement(
         public val uniqueId: String,
+        val visibility: OscVisibility,
         private val defaultX: Int,
         private val defaultY: Int,
         private val defaultSize: Int = 50,
@@ -151,13 +152,14 @@ open class OscElement(
 
 class OscImageButton(
         uniqueId: String,
+        visibility: OscVisibility,
         private val imageSrc: Int,
         defaultX: Int,
         defaultY: Int,
         private val keyCode: Int,
         private val needMouse: Boolean = false,
         defaultSize: Int = 50
-) : OscElement(uniqueId, defaultX, defaultY, defaultSize) {
+) : OscElement(uniqueId, visibility, defaultX, defaultY, defaultSize) {
 
     override fun makeView(ctx: Context) {
         val v = ImageView(ctx)
@@ -172,11 +174,12 @@ class OscImageButton(
 
 class OscKeyboardButton(
     uniqueId: String,
+    visibility: OscVisibility,
     private val imageSrc: Int,
     defaultX: Int,
     defaultY: Int,
     private val osc: Osc
-) : OscElement(uniqueId, defaultX, defaultY) {
+) : OscElement(uniqueId, visibility, defaultX, defaultY) {
 
     override fun makeView(ctx: Context) {
         val v = ImageView(ctx)
@@ -196,11 +199,12 @@ class OscKeyboardButton(
 
 class OscJoystickLeft(
     uniqueId: String,
+    visibility: OscVisibility,
     defaultX: Int,
     defaultY: Int,
     defaultSize: Int,
     private val stick: Int
-) : OscElement(uniqueId, defaultX, defaultY, defaultSize) {
+) : OscElement(uniqueId, visibility, defaultX, defaultY, defaultSize) {
 
     override fun makeView(ctx: Context) {
         val v = JoystickLeft(ctx)
@@ -214,11 +218,12 @@ class OscJoystickLeft(
 
 class OscJoystickRight(
     uniqueId: String,
+    visibility: OscVisibility,
     defaultX: Int,
     defaultY: Int,
     defaultSize: Int,
     private val stick: Int
-) : OscElement(uniqueId, defaultX, defaultY, defaultSize) {
+) : OscElement(uniqueId, visibility, defaultX, defaultY, defaultSize) {
 
     override fun makeView(ctx: Context) {
         val v = JoystickRight(ctx)
@@ -232,11 +237,12 @@ class OscJoystickRight(
 
 open class OscHiddenButton(
     uniqueId: String,
+    visibility: OscVisibility,
     defaultX: Int,
     defaultY: Int,
     private val title: String,
     private val keyCode: Int
-) : OscElement(uniqueId, defaultX, defaultY) {
+) : OscElement(uniqueId, visibility, defaultX, defaultY) {
 
     override fun makeView(ctx: Context) {
         val v = Button(ctx)
@@ -271,11 +277,12 @@ class ToggleTouchListener(private val buttons: ArrayList<OscHiddenButton>): View
 
 class OscHiddenToggle(
     uniqueId: String,
+    visibility: OscVisibility,
     defaultX: Int,
     defaultY: Int,
     title: String,
     private val buttons: ArrayList<OscHiddenButton>
-) : OscHiddenButton(uniqueId, defaultX, defaultY, title, 0) {
+) : OscHiddenButton(uniqueId, visibility, defaultX, defaultY, title, 0) {
 
     override fun makeView(ctx: Context) {
         super.makeView(ctx)
@@ -285,60 +292,95 @@ class OscHiddenToggle(
 
 }
 
+// Visibility is used as a bitmask
+enum class OscVisibility(val v: Int) {
+    // Mark as should not be touched by osc-visibility handling
+    NULL(0),
+    // Widgets that must be visible when menu is open
+    ESSENTIAL(1),
+    // Keyboard button and keys are visible
+    KEYBOARD(2),
+    ESSENTIAL_KEYBOARD(ESSENTIAL.v or KEYBOARD.v),
+    // Widgets visible during gameplay
+    NORMAL(4)
+}
+
 class Osc(
     multiplayer: Boolean
 ) {
     private var osk = Osk()
     private var keyboardVisible = false
-    private var keyboardButton = OscKeyboardButton("keyboard", R.drawable.keyboard, 586, 0, this)
+    private var keyboardButton = OscKeyboardButton("keyboard", OscVisibility.ESSENTIAL_KEYBOARD,
+        R.drawable.keyboard, 586, 0, this)
+    private var visibilityState = 0
 
     private var elements = arrayListOf(
-        OscImageButton("run", R.drawable.run, 65, 330, 115),
-        OscImageButton("inventory", R.drawable.inventory, 950, 95, 3, true),
-        OscImageButton("changePerson", R.drawable.backup, 212, 0, KeyEvent.KEYCODE_TAB),
-        OscImageButton("wait", R.drawable.wait, 274, 0, KeyEvent.KEYCODE_T),
-        OscImageButton("pause", R.drawable.pause, 950, 0, KeyEvent.KEYCODE_ESCAPE),
+        OscImageButton("run", OscVisibility.NORMAL,
+            R.drawable.run, 65, 330, 115),
+        OscImageButton("inventory", OscVisibility.ESSENTIAL,
+            R.drawable.inventory, 950, 95, 3, true),
+        OscImageButton("changePerson", OscVisibility.NORMAL,
+            R.drawable.backup, 212, 0, KeyEvent.KEYCODE_TAB),
+        OscImageButton("wait", OscVisibility.NORMAL,
+            R.drawable.wait, 274, 0, KeyEvent.KEYCODE_T),
+        OscImageButton("pause", OscVisibility.ESSENTIAL,
+            R.drawable.pause, 950, 0, KeyEvent.KEYCODE_ESCAPE),
         // TODO: replace load/save icons with more intuitive
-        OscImageButton("weapon", R.drawable.broadsword1, 880, 95, KeyEvent.KEYCODE_F),
-        OscImageButton("jump", R.drawable.jump, 920, 195, KeyEvent.KEYCODE_E),
-        OscImageButton("fire", R.drawable.crossbow, 720, 300, 1, true, 90),
-        OscImageButton("magic", R.drawable.starsattelites, 940, 480, KeyEvent.KEYCODE_R),
-        OscImageButton("crouch", R.drawable.c, 940, 670, 113),
-        OscImageButton("diary", R.drawable.di, 414, 0, KeyEvent.KEYCODE_J),
+        OscImageButton("quickLoad", OscVisibility.NORMAL,
+            R.drawable.load, 860, 0, 139),
+        OscImageButton("quickSave", OscVisibility.NORMAL,
+            R.drawable.save, 780, 0, 135),
+        OscImageButton("weapon", OscVisibility.NORMAL,
+            R.drawable.broadsword1, 880, 95, KeyEvent.KEYCODE_F),
+        OscImageButton("jump", OscVisibility.NORMAL,
+            R.drawable.jump, 920, 195, KeyEvent.KEYCODE_E),
+        OscImageButton("fire", OscVisibility.ESSENTIAL,
+            R.drawable.crossbow, 720, 300, 1, true, 90),
+        OscImageButton("magic", OscVisibility.NORMAL,
+            R.drawable.starsattelites, 940, 480, KeyEvent.KEYCODE_R),
+        OscImageButton("crouch", OscVisibility.NORMAL,
+            R.drawable.c, 940, 670, 113),
+        OscImageButton("diary", OscVisibility.NORMAL,
+            R.drawable.di, 414, 0, KeyEvent.KEYCODE_J),
         keyboardButton,
-        OscImageButton("use", R.drawable.use, 940, 368, KeyEvent.KEYCODE_SPACE),
+        OscImageButton("use", OscVisibility.ESSENTIAL,
+            R.drawable.use, 940, 368, KeyEvent.KEYCODE_SPACE),
 
-        OscImageButton("shift", R.drawable.del, 140, 0, KeyEvent.KEYCODE_SHIFT_LEFT),
-
-        OscJoystickLeft("joystickLeft", 75, 400, 170, 0),
-        OscJoystickRight("joystickRight", 650, 400, 170, 1)
+        OscJoystickLeft("joystickLeft", OscVisibility.NORMAL,
+            75, 400, 170, 0),
+        OscJoystickRight("joystickRight", OscVisibility.ESSENTIAL,
+            650, 400, 170, 1)
     )
  
     init {
         // add buttons we didn't do earlier
         if (multiplayer) { 
-            elements.add(OscImageButton("chat", R.drawable.chat, 780, 0, KeyEvent.KEYCODE_Y))
+            elements.add(OscImageButton("chat", OscVisibility.ESSENTIAL, R.drawable.chat, 780, 0, KeyEvent.KEYCODE_Y))
             // tes3mp doesn't allow quickload and quicksave
         } else {
-            elements.add(OscImageButton("quickLoad", R.drawable.load, 860, 0, 139))
-            elements.add(OscImageButton("quickSave", R.drawable.save, 780, 0, 135))
+            elements.add(OscImageButton("quickLoad", OscVisibility.NORMAL, R.drawable.load, 860, 0, 139))
+            elements.add(OscImageButton("quickSave", OscVisibility.NORMAL, R.drawable.save, 780, 0, 135))
         }
         val fnButtons = ArrayList<OscHiddenButton>()
 
         // Fn buttons: F1, F2, F3, F4, F10, F11 are the only ones we care about
         arrayOf(1, 2, 3, 4, 10, 11).forEachIndexed{ i, el ->
             val code = 130 + el
-            fnButtons.add(OscHiddenButton("f$el", 70, 70 * (i + 1), "F$el", code))
+            fnButtons.add(OscHiddenButton("f$el", OscVisibility.NULL,
+                70, 70 * (i + 1), "F$el", code))
         }
-        val fn = OscHiddenToggle("fn", 70, 0, "FN", fnButtons)
+        val fn = OscHiddenToggle("fn", OscVisibility.ESSENTIAL,
+            70, 0, "FN", fnButtons)
 
         // Quick buttons: 0 to 9
         val quickButtons = ArrayList<OscHiddenButton>()
         for (i in 0..9) {
             val code = KeyEvent.KEYCODE_0 + i
-            quickButtons.add(OscHiddenButton("qp$i", 0, 70 * (i + 1), "$i", code))
+            quickButtons.add(OscHiddenButton("qp$i", OscVisibility.NULL,
+                0, 70 * (i + 1), "$i", code))
         }
-        val qp = OscHiddenToggle("qp", 0, 0, "QP", quickButtons)
+        val qp = OscHiddenToggle("qp", OscVisibility.ESSENTIAL,
+            0, 0, "QP", quickButtons)
 
         elements.addAll(fnButtons)
         elements.add(fn)
@@ -354,32 +396,23 @@ class Osc(
         osk.placeElements(target)
 
         target.addOnLayoutChangeListener { v, l, t, r, b, ol, ot, or, ob -> relayout(l, t, r, b, ol, ot, or, ob) }
+
+        showNonEssential()
     }
+
+    private var prevVisibility = 0
 
     fun toggleKeyboard() {
         osk.toggle()
-        keyboardVisible = !keyboardVisible
-        for (element in elements) {
-            if (element == keyboardButton || element.uniqueId == "chat")
-                continue
-            // TODO: this kinda screws up the state for hidden toggles (i.e. open toggle => click keyboard twice)
-            if (!keyboardVisible && element is OscHiddenButton && element !is OscHiddenToggle)
-                continue
-            element.view?.visibility = if (keyboardVisible) View.GONE else View.VISIBLE
-        }
-    }
 
-    fun disableElements(disable: Boolean) {
-        if (keyboardVisible)
-            return
-        
-        for (element in elements) {
-            if (element == keyboardButton || element.uniqueId == "chat" || element.uniqueId == "pause" || element.uniqueId == "inventory" || element.uniqueId == "shift")
-                continue
-            if (!disable && element is OscHiddenButton && element !is OscHiddenToggle)
-                continue
-            element.view?.visibility = if (disable) View.GONE else View.VISIBLE
+        if (!keyboardVisible) {
+            prevVisibility = visibilityState
+            setVisibility(OscVisibility.KEYBOARD.v)
+        } else {
+            setVisibility(prevVisibility)
         }
+
+        keyboardVisible = !keyboardVisible
     }
 
     fun placeConfigurableElements(target: RelativeLayout, listener: View.OnTouchListener) {
@@ -395,6 +428,38 @@ class Osc(
         for (element in elements) {
             element.resetPrefs(ctx)
         }
+    }
+
+    /**
+     * Hide/show stuff based on visibility state
+     */
+    private fun setVisibility(newState: Int) {
+        if (visibilityState == newState)
+            return
+
+        for (element in elements) {
+            if (newState and element.visibility.v == 0) {
+                element.view?.visibility = View.GONE
+            } else {
+                element.view?.visibility = View.VISIBLE
+            }
+        }
+
+        visibilityState = newState
+    }
+
+    /**
+     * Hides everything except the widgets that should be visible in inventory screen
+     */
+    fun hideNonEssential() {
+        setVisibility(OscVisibility.ESSENTIAL.v)
+    }
+
+    /**
+     * Shows all widgets again
+     */
+    fun showNonEssential() {
+        setVisibility(OscVisibility.ESSENTIAL.v or OscVisibility.NORMAL.v)
     }
 
     private fun relayout(l: Int, t: Int, r: Int, b: Int, ol: Int, ot: Int, or: Int, ob: Int) {
