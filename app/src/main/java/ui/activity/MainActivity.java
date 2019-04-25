@@ -31,7 +31,6 @@ import java.io.InputStreamReader;
 
 import file.utils.CopyFilesFromAssets;
 import ui.fragments.FragmentBrowser;
-import ui.game.GameState;
 import ui.fragments.FragmentSettings;
 import permission.PermissionHelper;
 import file.ConfigsFileStorageHelper;

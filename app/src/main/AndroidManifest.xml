@@ -8,7 +8,6 @@
     <!-- Allow writing to external storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Networking for raknet and tes3mp -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -43,7 +42,7 @@
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.AppCompat.FullScreen" />
-            
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="f88fafa8fb5677ac16dd43aaf73f988cd6095b06" />

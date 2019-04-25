@@ -66,11 +66,6 @@ public class MouseCursor implements Choreographer.FrameCallback {
 
         choreographer = Choreographer.getInstance();
         choreographer.postFrameCallback(this);
-
-        float alpha = Settings.getFloat(Constants.MOUSE_TRANSPARENCY, 100.0f);
-
-        cursor.setAlpha((alpha / 100.0f));
-
     }
 
     @Override
