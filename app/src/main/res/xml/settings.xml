@@ -19,6 +19,11 @@
             android:summary="Change between Singleplayer and Multiplayer mode"
             android:title="Multiplayer" />
 
+        <Preference
+            android:title="Server Browser"
+            android:key="pref_browser"
+            />
+
         <ListPreference
             android:key="pref_encoding"
             android:summary="%s"
