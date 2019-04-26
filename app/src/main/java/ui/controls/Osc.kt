@@ -12,6 +12,8 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import com.libopenmw.openmw.R
+import org.libsdl.app.SDLActivity
+import ui.activity.GameActivity
 
 const val VIRTUAL_SCREEN_WIDTH = 1024
 const val VIRTUAL_SCREEN_HEIGHT = 768
@@ -369,7 +371,7 @@ class Osc(
             fnButtons.add(OscHiddenButton("f$el", OscVisibility.NULL,
                 70, 70 * (i + 1), "F$el", code))
         }
-        val fn = OscHiddenToggle("fn", OscVisibility.ESSENTIAL,
+        val fn = OscHiddenToggle("fn", OscVisibility.NULL,
             70, 0, "FN", fnButtons)
 
         // Quick buttons: 0 to 9
@@ -379,7 +381,7 @@ class Osc(
             quickButtons.add(OscHiddenButton("qp$i", OscVisibility.NULL,
                 0, 70 * (i + 1), "$i", code))
         }
-        val qp = OscHiddenToggle("qp", OscVisibility.ESSENTIAL,
+        val qp = OscHiddenToggle("qp", OscVisibility.NULL,
             0, 0, "QP", quickButtons)
 
         elements.addAll(fnButtons)
@@ -400,19 +402,19 @@ class Osc(
         showNonEssential()
     }
 
-    private var prevVisibility = 0
-
     fun toggleKeyboard() {
         osk.toggle()
 
         if (!keyboardVisible) {
-            prevVisibility = visibilityState
+            keyboardVisible = true
             setVisibility(OscVisibility.KEYBOARD.v)
         } else {
-            setVisibility(prevVisibility)
+            keyboardVisible = false
+            if (SDLActivity.isMouseShown() == 0)
+                showNonEssential()
+            else
+                hideNonEssential()
         }
-
-        keyboardVisible = !keyboardVisible
     }
 
     fun placeConfigurableElements(target: RelativeLayout, listener: View.OnTouchListener) {
@@ -438,6 +440,9 @@ class Osc(
             return
 
         for (element in elements) {
+            // don't touch elements with NULL visibility as these are managed externally
+            if (element.visibility == OscVisibility.NULL)
+                continue
             if (newState and element.visibility.v == 0) {
                 element.view?.visibility = View.GONE
             } else {
@@ -452,14 +457,16 @@ class Osc(
      * Hides everything except the widgets that should be visible in inventory screen
      */
     fun hideNonEssential() {
-        setVisibility(OscVisibility.ESSENTIAL.v)
+        if (!keyboardVisible)
+            setVisibility(OscVisibility.ESSENTIAL.v)
     }
 
     /**
      * Shows all widgets again
      */
     fun showNonEssential() {
-        setVisibility(OscVisibility.ESSENTIAL.v or OscVisibility.NORMAL.v)
+        if (!keyboardVisible)
+            setVisibility(OscVisibility.ESSENTIAL.v or OscVisibility.NORMAL.v)
     }
 
     private fun relayout(l: Int, t: Int, r: Int, b: Int, ol: Int, ot: Int, or: Int, ob: Int) {

@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -55,9 +54,6 @@ public class MainActivity extends AppCompatActivity {
         PermissionHelper.getWriteExternalStoragePermission(MainActivity.this);
         setContentView(R.layout.main);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, new FragmentSettings()).commit();
@@ -135,8 +131,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         try {
-            file.Writer.write(String.valueOf(resolutionX), ConfigsFileStorageHelper.SETTINGS_CFG, "resolution x");
-            file.Writer.write(String.valueOf(resolutionY), ConfigsFileStorageHelper.SETTINGS_CFG, "resolution y");
+            file.Writer.write(ConfigsFileStorageHelper.SETTINGS_CFG, "resolution x", String.valueOf(resolutionX));
+            file.Writer.write(ConfigsFileStorageHelper.SETTINGS_CFG, "resolution y", String.valueOf(resolutionY));
         } catch (IOException e) {
             // TODO
         }
@@ -174,19 +170,19 @@ public class MainActivity extends AppCompatActivity {
                 // openmw.cfg: data, resources
                 // TODO: probably should just reuse ConfigsFileStorageHelper
                 file.Writer.write(
-                        CONFIGS_FILES_STORAGE_PATH + (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("multiplayer", false) ? "/tes3mp-resources" : "/resources"),
                         OPENMW_CFG,
-                        "resources");
+                        "resources",
+                        CONFIGS_FILES_STORAGE_PATH + (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("multiplayer", false) ? "/tes3mp-resources" : "/resources"));
                 // TODO: it will crash if there's no value/invalid value provided
-                file.Writer.write(prefs.getString("data_files", ""), OPENMW_CFG, "data");
+                file.Writer.write(OPENMW_CFG, "data", prefs.getString("data_files", ""));
 
-                file.Writer.write(prefs.getString("pref_encoding", "win1252"), OPENMW_CFG, "encoding");
+                file.Writer.write(OPENMW_CFG, "encoding", prefs.getString("pref_encoding", "win1252"));
 
-                file.Writer.write(prefs.getString("pref_uiScaling", "1.0"), SETTINGS_CFG, "scaling factor");
+                file.Writer.write(SETTINGS_CFG, "scaling factor", prefs.getString("pref_uiScaling", "1.0"));
 
-                file.Writer.write(prefs.getString("pref_allowCapsuleShape", "true"), SETTINGS_CFG, "allow capsule shape");
+                file.Writer.write(SETTINGS_CFG, "allow capsule shape", prefs.getString("pref_allowCapsuleShape", "true"));
 
-                file.Writer.write(prefs.getString("pref_preload", "false"), SETTINGS_CFG, "preload enabled");
+                file.Writer.write(SETTINGS_CFG, "preload enabled", prefs.getString("pref_preload", "false"));
 
                 file.Writer.write(prefs.getString("pref_viewingDistance", "2000"), SETTINGS_CFG, "viewing distance");
 

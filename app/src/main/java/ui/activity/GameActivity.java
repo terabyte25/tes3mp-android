@@ -3,18 +3,12 @@ package ui.activity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Process;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
 import android.system.ErrnoException;
 import android.system.Os;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import org.libsdl.app.SDLActivity;
@@ -29,14 +23,6 @@ import ui.fragments.FragmentBrowser;
 import static utils.Utils.hideAndroidControls;
 
 public class GameActivity extends SDLActivity {
-
-    private int numPointersDown;
-    private int maxPointersDown;
-    private int mouseDeadzone;
-    private float startX;
-    private float startY;
-    private boolean isMoving;
-    private double mouseScalingFactor;
 
     public static native void getPathToJni(String path);
 
@@ -94,7 +80,6 @@ public class GameActivity extends SDLActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        NativeListener.initJavaVm();
         KeepScreenOn();
         getPathToJni(ConfigsFileStorageHelper.CONFIGS_FILES_STORAGE_PATH);
         showControls();
@@ -113,14 +98,14 @@ public class GameActivity extends SDLActivity {
      }
 
     private void showControls() {
-        hideControls = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.HIDE_CONTROLS, false);
+        boolean hideControls = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.HIDE_CONTROLS, false);
         Osc osc = null;
         if (!hideControls) {
             RelativeLayout layout = getLayout();
             osc = new Osc(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("multiplayer", false));
             osc.placeElements(layout);
         }
-        cursor = new MouseCursor(this, osc);
+        new MouseCursor(this, osc);
     }
 
     private void KeepScreenOn() {
