@@ -3,13 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.libopenmw.openmw"
     android:installLocation="auto"
-<<<<<<< HEAD
     android:versionCode="1"
     android:versionName="0.7.0-alpha">
 
-=======
-    android:versionCode="8">
->>>>>>> upstream/master
     <!-- Allow writing to external storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

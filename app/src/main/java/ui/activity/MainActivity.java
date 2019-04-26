@@ -173,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
                         OPENMW_CFG,
                         "resources",
                         CONFIGS_FILES_STORAGE_PATH + (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("multiplayer", false) ? "/tes3mp-resources" : "/resources"));
+                
                 // TODO: it will crash if there's no value/invalid value provided
                 file.Writer.write(OPENMW_CFG, "data", prefs.getString("data_files", ""));
 
@@ -184,9 +185,9 @@ public class MainActivity extends AppCompatActivity {
 
                 file.Writer.write(SETTINGS_CFG, "preload enabled", prefs.getString("pref_preload", "false"));
 
-                file.Writer.write(prefs.getString("pref_viewingDistance", "2000"), SETTINGS_CFG, "viewing distance");
+                file.Writer.write(SETTINGS_CFG, "viewing distance", prefs.getString("pref_viewingDistance", "2000"));
 
-                file.Writer.write(prefs.getString("pref_distantTerrain", "false"), SETTINGS_CFG, "distant terrain");
+                file.Writer.write(SETTINGS_CFG, "distant terrain", prefs.getString("pref_distantTerrain", "false"));
 
                 runOnUiThread(() -> {
                     obtainScreenResolution();
