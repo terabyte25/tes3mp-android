@@ -18,7 +18,7 @@ import cursor.MouseCursor;
 import parser.CommandlineParser;
 import ui.controls.Osc;
 import file.ConfigsFileStorageHelper;
-import ui.fragments.FragmentBrowser;
+import ui.activity.BrowserActivity;
 
 import static utils.Utils.hideAndroidControls;
 
@@ -29,7 +29,6 @@ public class GameActivity extends SDLActivity {
     public static native void commandLine(int argc, String[] argv);
 
     private boolean hideControls = false;
-    private boolean touchControls = false;
 
     private MouseCursor cursor;
     private SharedPreferences prefs;
@@ -119,7 +118,7 @@ public class GameActivity extends SDLActivity {
     }
 
     protected String[] getArguments() {
-        String browserarg = FragmentBrowser.getArgv();
+        String browserarg = BrowserActivity.getArgv();
         if(browserarg == "") {
             String cmd = PreferenceManager.getDefaultSharedPreferences(this).getString("commandLine", "");
             CommandlineParser commandlineParser = new CommandlineParser(cmd);

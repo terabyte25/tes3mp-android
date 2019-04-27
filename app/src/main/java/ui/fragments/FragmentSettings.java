@@ -14,6 +14,7 @@ import com.libopenmw.openmw.R;
 
 import ui.activity.ConfigureControls;
 import ui.activity.ModsActivity;
+import ui.activity.BrowserActivity;
 
 public class FragmentSettings extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
@@ -32,6 +33,12 @@ public class FragmentSettings extends PreferenceFragment implements OnSharedPref
 
         findPreference("pref_mods").setOnPreferenceClickListener((Preference pref) -> {
             Intent intent = new Intent(getActivity(), ModsActivity.class);
+            this.startActivity(intent);
+            return true;
+        });
+
+        findPreference("pref_browser").setOnPreferenceClickListener((Preference pref) -> {
+            Intent intent = new Intent(getActivity(), BrowserActivity.class);
             this.startActivity(intent);
             return true;
         });

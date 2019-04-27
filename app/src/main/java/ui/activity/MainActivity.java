@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import file.utils.CopyFilesFromAssets;
-import ui.fragments.FragmentBrowser;
+import ui.activity.BrowserActivity;
 import ui.fragments.FragmentSettings;
 import permission.PermissionHelper;
 import file.ConfigsFileStorageHelper;
@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     public static int resolutionX = 0;
     public static int resolutionY = 0;
 
+    public static MainActivity main;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         PermissionHelper.getWriteExternalStoragePermission(MainActivity.this);
         setContentView(R.layout.main);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        main = MainActivity.this;
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, new FragmentSettings()).commit();

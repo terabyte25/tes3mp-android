@@ -27,7 +27,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import ui.fragments.FragmentBrowser;
+import ui.activity.BrowserActivity;
 
 
 /**
@@ -146,7 +146,7 @@ public class CustomAdapter extends ArrayAdapter<Server> implements View.OnClickL
 
         @Override
         protected void onPostExecute(String result) {
-            FragmentBrowser.Servers.clear();
+            BrowserActivity.Servers.clear();
             try {
 
                 JSONObject obj = new JSONObject(result);
@@ -169,7 +169,7 @@ public class CustomAdapter extends ArrayAdapter<Server> implements View.OnClickL
                         int playercount = anotherobject.getInt("players");
                         boolean passworded = anotherobject.getBoolean("passw");
 
-                        FragmentBrowser.Servers.add(new Server(passworded, key, hostname, playercount));
+                        BrowserActivity.Servers.add(new Server(passworded, key, hostname, playercount));
 
                     } catch (JSONException e) {
                     }
@@ -178,10 +178,10 @@ public class CustomAdapter extends ArrayAdapter<Server> implements View.OnClickL
             } catch (Throwable t) {
             }
             // https://stackoverflow.com/questions/16441298/android-call-notifydatasetchanged-from-asynctask
-            if (FragmentBrowser.sortPlayersFilter)
-                FragmentBrowser.sortPlayers();
-            else if (FragmentBrowser.sortAlphabetFilter)
-                FragmentBrowser.sortAlphabet();
+            if (BrowserActivity.sortPlayersFilter)
+                BrowserActivity.sortPlayers();
+            else if (BrowserActivity.sortAlphabetFilter)
+                BrowserActivity.sortAlphabet();
             
             CustomAdapter.this.notifyDataSetChanged();
 

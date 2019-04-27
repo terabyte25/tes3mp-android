@@ -55,6 +55,16 @@
             android:exported="true"
             android:label="@string/activity_mods"
             />
+
+        <activity
+            android:name="ui.activity.BrowserActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="fullUser"
+            android:theme="@style/MyTheme"
+            android:exported="true"
+            android:label="browser"
+            />
+
     </application>
 
 </manifest>

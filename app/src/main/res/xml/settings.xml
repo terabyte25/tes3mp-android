@@ -64,11 +64,6 @@
             android:key="screen_keeper"
             android:summary="Keep screen always on"
             android:title="Screen" />
-        
-        <CheckBoxPreference
-            android:key="touchControl"
-            android:summary="Change between touch control and cursor mode"
-            android:title="Touch Control" />
 
     </PreferenceCategory>
 

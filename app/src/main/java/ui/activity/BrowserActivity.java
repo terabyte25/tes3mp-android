@@ -1,5 +1,6 @@
-package ui.fragments;
+package ui.activity;
 
+import android.support.v7.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.v4.app.Fragment;
+
+import android.support.v7.widget.Toolbar;
 
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,7 +29,7 @@ import ui.activity.MainActivity;
 import utils.CustomAdapter;
 import utils.Server;
 // https://www.journaldev.com/10416/android-listview-with-custom-adapter-example-tutorial
-public class FragmentBrowser extends Fragment {
+public class BrowserActivity extends AppCompatActivity {
     public static ArrayList<Server> Servers = new ArrayList<>();
     public static CustomAdapter adapter;
     public static boolean sortPlayersFilter = false;
@@ -34,19 +37,17 @@ public class FragmentBrowser extends Fragment {
     private static SwipeRefreshLayout pullToRefresh;
     ListView listView;
     public static String CommandArgs = "";
-    private static MainActivity activity;
     private String password = "";
-    public FragmentBrowser(MainActivity mainActivity) {
-        this.activity = mainActivity;
-    }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View rootView = inflater.inflate(R.layout.browser, container, false);
-        listView = (ListView) rootView.findViewById(R.id.list);
-        pullToRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.pullToRefresh);
-        adapter = new CustomAdapter(Servers, this.getActivity());
+
+        setContentView(R.layout.browser);
+        listView = (ListView) findViewById(R.id.list);
+
+        pullToRefresh = (SwipeRefreshLayout) findViewById(R.id.pullToRefresh);
+        adapter = new CustomAdapter(Servers, this);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -56,14 +57,14 @@ public class FragmentBrowser extends Fragment {
 
 
                 CommandArgs = ("--connect " + Server.getip());
-                if (!PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("multiplayer", false)) {
-                    Toast toast = Toast.makeText(activity,
+                if (!PreferenceManager.getDefaultSharedPreferences(BrowserActivity.this).getBoolean("multiplayer", false)) {
+                    Toast toast = Toast.makeText(BrowserActivity.this,
                         "You must enable multiplayer in the settings menu in order to join a server.", Toast.LENGTH_LONG);
                     toast.show();
                 } else if (Server.getPassworded()) 
                     displayInput();
                 else
-                    activity.startGame();
+                    MainActivity.main.startGame();
             }
         });
         // https://javapapers.com/android/android-swipe-down-to-refresh-a-listview/
@@ -74,9 +75,6 @@ public class FragmentBrowser extends Fragment {
                 pullToRefresh.setRefreshing(false);
             }
         });
-
-        return rootView;
-
     }
 
     public static String getArgv() {
@@ -86,11 +84,11 @@ public class FragmentBrowser extends Fragment {
     // https://stackoverflow.com/questions/10903754/input-text-dialog-android
     public void displayInput() {
         AlertDialog.Builder builder;
-        builder = new AlertDialog.Builder(getActivity());
+        builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter password");
 
         // Set up the input
-        final EditText input = new EditText(getActivity());
+        final EditText input = new EditText(this);
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         builder.setView(input);
@@ -101,7 +99,7 @@ public class FragmentBrowser extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 password = input.getText().toString();
                 CommandArgs += (" --password " + password);
-                activity.startGame();
+                MainActivity.main.startGame();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -136,7 +134,6 @@ public class FragmentBrowser extends Fragment {
         sortPlayersFilter = false;
         sortAlphabetFilter = true;
     }
-
 }
 
 
