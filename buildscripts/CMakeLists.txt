@@ -49,8 +49,8 @@ set(OSG_FORK_VERSION ecedf3232c2f1b3b6a2f06f77ea37a9afb6a93f5)
 set(OSG_FORK_HASH SHA256=254f0ce0e236aa80700877ee8664430c1f491be78ea1118bcd53178260edb4b5)
 
 # https://github.com/OpenMW/openmw/commits/master
-set(OPENMW_VERSION 7941fd67801295a74b21b9e7929cbbab4a60e950)
-set(OPENMW_HASH SHA256=2843717b42af1982eed9995c279a3b2ef3a04f81e961f35ed79bd330832f5987)
+set(OPENMW_VERSION b77bd9cf9b06bfa1be2eac59390e8d4744fcd2e9)
+set(OPENMW_HASH SHA256=b158f9c1fa5d1b83ab1ebb2867d190951f28ad098faf0ed93a4349087939e67c)
 
 # https://github.com/tes3mp/openmw-tes3mp/commits/0.7.0
 set(TES3MP_VERSION 292536439eeda58becdb7e441fe2e61ebb74529e)
@@ -477,7 +477,8 @@ set(OPENMW_PATCH
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0002-scenemanager-disable-state-share-inc-compile-openmw.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0003-globalmap-fix-race-vs-savegame-load.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0004-getUVBuffer-pre-set-array-binding-to-avoid-thread-ra.patch &&
-	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0008-Revert-Merge-pull-request-2238-from-Capostrophic-fre.patch
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0008-Revert-Merge-pull-request-2238-from-Capostrophic-fre.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/2344.patch
 )
 
 set(TES3MP_PATCH
