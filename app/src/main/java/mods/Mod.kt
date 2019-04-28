@@ -20,7 +20,7 @@ enum class ModType(val v: Int) {
  * @param order Load order, or order in the list
  * @param enabled Whether the mod is enabled
  */
-class Mod(val type: ModType, val filename: String, var order: Int, val enabled: Boolean) {
+class Mod(val type: ModType, val filename: String, var order: Int, var enabled: Boolean) {
 
     /// Set to true when DB update is needed to keep consistency
     var dirty: Boolean = false
@@ -36,6 +36,18 @@ class Mod(val type: ModType, val filename: String, var order: Int, val enabled: 
             .whereArgs("filename = {filename} AND type = {type}",
                 "filename" to filename,
                 "type" to type.v).exec()
+    }
+
+    /**
+     * Inserts this mod into the database
+     * @param db Database connection
+     */
+    fun insert(db: SQLiteDatabase) {
+        db.insert("mod",
+            "type" to type.v,
+            "filename" to filename,
+            "load_order" to order,
+            "enabled" to (if (enabled) 1 else 0))
     }
 }
 
