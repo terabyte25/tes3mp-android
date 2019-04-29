@@ -1243,7 +1243,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         Log.v("SDL", "surfaceCreated()");
         holder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
 
-        SDLActivity.omwSurfaceRecreated();
+        //SDLActivity.omwSurfaceRecreated();
     }
 
     // Called when we lose the surface
@@ -1258,7 +1258,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         SDLActivity.mIsSurfaceReady = false;
         SDLActivity.onNativeSurfaceDestroyed();
 
-        SDLActivity.omwSurfaceDestroyed();
+        //SDLActivity.omwSurfaceDestroyed();
     }
 
     // Called when the surface is resized
