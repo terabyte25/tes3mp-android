@@ -73,6 +73,8 @@ class MainActivity : AppCompatActivity() {
 
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener { startGame() }
+
+        main = this
     }
 
     private fun deleteRecursive(fileOrDirectory: File) {
@@ -196,7 +198,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun startGame() {
+    public fun startGame() {
         val dialog = ProgressDialog.show(
             this, "", "Preparing for launch...", true)
 
@@ -229,7 +231,7 @@ class MainActivity : AppCompatActivity() {
 
                 // openmw.cfg: data, resources
                 file.Writer.write(
-                    Constants.OPENMW_CFG, "resources", Constants.CONFIGS_FILES_STORAGE_PATH + "/resources"
+                    Constants.OPENMW_CFG, "resources", Constants.CONFIGS_FILES_STORAGE_PATH + (if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("multiplayer", false)) "/tes3mp-resources" else "/resources")
                 )
                 // TODO: it will crash if there's no value/invalid value provided
                 file.Writer.write(Constants.OPENMW_CFG, "data", '"'.toString() + prefs!!.getString("data_files", "") + '"'.toString())
@@ -287,6 +289,8 @@ class MainActivity : AppCompatActivity() {
 
         var resolutionX = 0
         var resolutionY = 0
+
+        @JvmField var main: MainActivity?  = null
 
         // https://stackoverflow.com/a/13357785/2606891
         @Throws(IOException::class)
