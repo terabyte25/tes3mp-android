@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:key="genereal_settings"
-        android:title="Game setup">
+        android:key="general_settings"
+        android:title="@string/general_settings">
 
         <Preference
             android:key="data_files"
@@ -47,11 +47,12 @@
             android:title="@string/pref_uiScaling"
             android:dialogTitle="@string/pref_uiScaling"
             android:inputType="numberDecimal"
+            android:hint="1.5"
             />
 
         <CheckBoxPreference
-            android:key="hidecontrols"
-            android:title="Hide onscreen buttons" />
+            android:key="pref_hide_controls"
+            android:title="@string/pref_hide_controls" />
 
         <EditTextPreference
             android:key="pref_customResolution"
@@ -61,10 +62,8 @@
             />
 
         <CheckBoxPreference
-            android:key="screen_keeper"
-            android:summary="Keep screen always on"
-            android:title="Screen" />
-
+            android:key="pref_screen_keeper"
+            android:title="@string/pref_screen_keeper"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_advanced">
@@ -82,16 +81,6 @@
             android:defaultValue="@string/pref_graphicsLibrary_default"
             android:summary="%s"
         />
-
-        <ListPreference
-            android:key="pref_osg"
-            android:title="@string/pref_osg"
-            android:dialogTitle="@string/pref_osg"
-            android:entries="@array/pref_osg_entries"
-            android:entryValues="@array/pref_osg_values"
-            android:defaultValue="@string/pref_osg_default"
-            android:summary="%s"
-            />
 
         <ListPreference
             android:key="pref_physicsFPS"
