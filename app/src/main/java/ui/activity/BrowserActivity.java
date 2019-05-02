@@ -29,7 +29,7 @@ import utils.Server;
 public class BrowserActivity extends AppCompatActivity {
     public static ArrayList<Server> Servers = new ArrayList<>();
     public static CustomAdapter adapter;
-    public static boolean sortPlayersFilter = false;
+    public static boolean sortPlayersFilter = true; // set to true by default
     public static boolean sortAlphabetFilter = false;
     private static SwipeRefreshLayout pullToRefresh;
     ListView listView;

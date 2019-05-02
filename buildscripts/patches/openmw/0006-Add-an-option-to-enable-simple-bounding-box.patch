@@ -1,7 +1,7 @@
-From 8c720d46043fdb8ee1a87efa2789bcfa324d1d87 Mon Sep 17 00:00:00 2001
+From fc4eef7647102200f8274a51e49e82e529fcc3aa Mon Sep 17 00:00:00 2001
 From: Ilya Zhuravlev <whatever@xyz.is>
 Date: Mon, 1 Apr 2019 13:32:49 -0400
-Subject: [PATCH 06/13] Add an option to enable simple bounding box
+Subject: [PATCH 6/9] Add an option to enable simple bounding box
 
 ---
  apps/openmw/mwphysics/actor.cpp | 5 ++++-
@@ -9,7 +9,7 @@ Subject: [PATCH 06/13] Add an option to enable simple bounding box
  2 files changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/apps/openmw/mwphysics/actor.cpp b/apps/openmw/mwphysics/actor.cpp
-index 632d32c26..6b5c115d4 100644
+index 0f8814aca..5bcf01508 100644
 --- a/apps/openmw/mwphysics/actor.cpp
 +++ b/apps/openmw/mwphysics/actor.cpp
 @@ -8,6 +8,7 @@
@@ -52,3 +52,6 @@ index 989224190..be699ed32 100644
  # Allow non-standard ammunition solely to bypass normal weapon resistance or weakness
  only appropriate ammunition bypasses resistance = false
  
+-- 
+2.19.2
+

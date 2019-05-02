@@ -1,7 +1,7 @@
-From 53c705a2f2664d40938ef642d32f458460cef909 Mon Sep 17 00:00:00 2001
+From 4eea4edd1b1267cf9f0b42d3a3dc8eb7018c9763 Mon Sep 17 00:00:00 2001
 From: Ilya Zhuravlev <whatever@xyz.is>
 Date: Mon, 1 Apr 2019 13:32:32 -0400
-Subject: [PATCH 05/13] android: Revert UI dimensions
+Subject: [PATCH 5/9] android: Revert UI dimensions
 
 ---
  files/settings-default.cfg | 95 ++++++++++++++++++++------------------
@@ -77,11 +77,7 @@ index 7e7e04b78..989224190 100644
  
  # Alchemy window for crafting potions.
  alchemy x = 0.25
-<<<<<<< HEAD:buildscripts/patches/openmw-revert-ui-dimensions.patch
-@@ -491,54 +491,54 @@ alchemy w = 0.5
-=======
 @@ -524,46 +527,46 @@ alchemy w = 0.5
->>>>>>> upstream/master:buildscripts/patches/openmw/0005-android-Revert-UI-dimensions.patch
  alchemy h = 0.5
  
  # Console command window for debugging commands.
@@ -154,3 +150,6 @@ index 7e7e04b78..989224190 100644
  
  [Navigator]
  
+-- 
+2.19.2
+

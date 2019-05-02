@@ -345,10 +345,6 @@ class Osc(
         OscImageButton("pause", OscVisibility.ESSENTIAL,
             R.drawable.pause, 950, 0, KeyEvent.KEYCODE_ESCAPE),
         // TODO: replace load/save icons with more intuitive
-        OscImageButton("quickLoad", OscVisibility.NORMAL,
-            R.drawable.load, 860, 0, 139),
-        OscImageButton("quickSave", OscVisibility.NORMAL,
-            R.drawable.save, 780, 0, 135),
         OscImageButton("weapon", OscVisibility.NORMAL,
             R.drawable.toggle_weapon, 880, 95, KeyEvent.KEYCODE_F),
         OscImageButton("jump", OscVisibility.NORMAL,
@@ -374,7 +370,7 @@ class Osc(
     init {
         // add buttons we didn't do earlier
         if (multiplayer) { 
-            elements.add(OscImageButton("chat", OscVisibility.ESSENTIAL, R.drawable.chat, 780, 0, KeyEvent.KEYCODE_Y))
+            elements.add(OscImageButton("chat", OscVisibility.NULL, R.drawable.chat, 780, 0, KeyEvent.KEYCODE_Y))
             // tes3mp doesn't allow quickload and quicksave
         } else {
             elements.add(OscImageButton("quickLoad", OscVisibility.NORMAL, R.drawable.load, 860, 0, 139))
