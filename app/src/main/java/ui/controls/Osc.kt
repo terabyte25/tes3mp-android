@@ -328,7 +328,7 @@ class Osc(
     multiplayer: Boolean
 ) {
     private var osk = Osk()
-    private var keyboardVisible = false
+    public var keyboardVisible = false
     private var keyboardButton = OscKeyboardButton("keyboard", OscVisibility.ESSENTIAL_KEYBOARD,
         R.drawable.keyboard, 586, 0, this)
     private var visibilityState = 0

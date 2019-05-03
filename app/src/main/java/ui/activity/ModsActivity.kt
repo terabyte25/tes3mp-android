@@ -23,13 +23,14 @@ import com.libopenmw.openmw.R
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.preference.PreferenceManager
 import com.google.android.material.tabs.TabLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import file.GameInstaller
 import kotlinx.android.synthetic.main.activity_mods.*
 import mods.*
+import android.view.MenuItem
 
 
 class ModsActivity : AppCompatActivity() {
@@ -37,6 +38,9 @@ class ModsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mods)
+
+        // Enable the "back" icon in the action bar
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Switch tabs between plugins/resources
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -62,11 +66,10 @@ class ModsActivity : AppCompatActivity() {
      * @param type Type of the mods this list will contain
      */
     private fun setupModList(list: RecyclerView, type: ModType) {
-        val dataFiles = PreferenceManager.getDefaultSharedPreferences(this)
-            .getString("data_files", "")
+        val dataFiles = GameInstaller.getDataFiles(this)
 
         val linearLayoutManager = LinearLayoutManager(this)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        linearLayoutManager.orientation = RecyclerView.VERTICAL
         list.layoutManager = linearLayoutManager
 
         // Set up the adapter using the specified ModsCollection
@@ -80,5 +83,19 @@ class ModsActivity : AppCompatActivity() {
         adapter.touchHelper = touchHelper
 
         list.adapter = adapter
+    }
+
+    /**
+     * Makes the "back" icon in the actionbar perform the back operation
+     */
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

@@ -275,7 +275,7 @@ class Osk {
 
         // Backspace
         elements.add(OskRawButton(
-            "⌫",
+            "Bksp",
             KeyEvent.KEYCODE_DEL,
             lineOffset[0] + (buttonWidth + buttonMarginX) * keyboardLayout[0].length / 2,
             offsetY,
@@ -285,7 +285,7 @@ class Osk {
 
         // Enter
         elements.add(OskRawButton(
-            "⏎",
+            "Return",
             KeyEvent.KEYCODE_ENTER,
             lineOffset[2] + (buttonWidth + buttonMarginX) * keyboardLayout[2].length / 2,
             offsetY + (buttonHeight + buttonMarginY) * 2,

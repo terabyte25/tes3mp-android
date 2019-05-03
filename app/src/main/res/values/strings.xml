@@ -32,11 +32,11 @@
         <item>halfResolution</item>
     </string-array>
 
-    <string name="general_settings">Game setup</string>
+    <string name="general_settings">Setup</string>
     <string name="start_game_label">Start game</string>
     <string name="closeDrawer">Navigation View</string>
     <string name="openDrawer">Navigation View Closed</string>
-    <string name="data_files">Game data files</string>
+    <string name="game_files">Game files</string>
 
     <!-- Graphics library -->
     <string name="pref_graphicsLibrary">Graphics library</string>
@@ -45,6 +45,7 @@
     <string name="pref_commandLine">Custom command line arguments</string>
     <string name="pref_ui">User interface</string>
     <string name="pref_uiScaling">GUI scaling factor</string>
+    <string name="uiScaling_auto">Auto (%1$.2f)</string>
     <string name="pref_screen_keeper">Keep screen always on</string>
     <string name="pref_touchpadSensitivity">Virtual touchpad sensitivity</string>
     <string name="pref_viewingDistance">Viewing distance</string>
@@ -130,5 +131,11 @@
     <string name="activity_mods">Mods</string>
     <string name="tab_plugins">Plugins</string>
     <string name="tab_resources">Resources</string>
+    <string name="data_error_title">Error locating data files</string>
+    <string name="data_error_message">Please select a directory which contains both the \"Morrowind.ini\" file and the \"Data Files\" directory.</string>
+    <string name="ini_error_message">Failure transforming the configuration file. Please ensure your \"Morrowind.ini\" is well-formed.</string>
+
+    <string name="no_data_files_title">Data files not found</string>
+    <string name="no_data_files_message">You must copy Morrowind game files to your device and select the path under "Game files" before the game can be played.</string>
 
 </resources>

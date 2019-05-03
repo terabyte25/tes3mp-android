@@ -4,25 +4,10 @@
         android:key="general_settings"
         android:title="@string/general_settings">
 
-        <Preference
-            android:key="data_files"
-            android:title="@string/data_files"
-            />
-
-        <Preference
-            android:title="@string/mods"
-            android:key="pref_mods"
-            />
-
         <CheckBoxPreference
             android:key="multiplayer"
             android:summary="Change between Singleplayer and Multiplayer mode"
             android:title="Multiplayer" />
-
-        <Preference
-            android:title="Server Browser"
-            android:key="pref_browser"
-            />
 
         <ListPreference
             android:key="pref_encoding"
@@ -32,6 +17,21 @@
             android:entries="@array/pref_encoding_entries"
             android:entryValues="@array/pref_encoding_values"
             android:defaultValue="@string/pref_encoding_default"
+            />
+
+        <Preference
+            android:key="game_files"
+            android:title="@string/game_files"
+            />
+
+        <Preference
+            android:title="@string/mods"
+            android:key="pref_mods"
+            />
+            
+        <Preference
+            android:title="Server Browser"
+            android:key="pref_browser"
             />
     </PreferenceCategory>
 

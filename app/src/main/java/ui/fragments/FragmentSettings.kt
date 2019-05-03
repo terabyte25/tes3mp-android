@@ -20,6 +20,8 @@
 
 package ui.fragments
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
@@ -31,8 +33,10 @@ import android.preference.PreferenceGroup
 
 import com.codekidlabs.storagechooser.StorageChooser
 import com.libopenmw.openmw.R
+import file.GameInstaller
 
 import ui.activity.ConfigureControls
+import ui.activity.MainActivity
 import ui.activity.ModsActivity
 import ui.activity.BrowserActivity;
 
@@ -62,7 +66,7 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
             true
         }
 
-        findPreference("data_files").setOnPreferenceClickListener {
+        findPreference("game_files").setOnPreferenceClickListener {
             val chooser = StorageChooser.Builder()
                 .withActivity(activity)
                 .withFragmentManager(fragmentManager)
@@ -73,14 +77,53 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
 
             chooser.show()
 
-            chooser.setOnSelectListener { path ->
-                val sharedPref = preferenceScreen.sharedPreferences
-                val editor = sharedPref.edit()
-                editor.putString("data_files", path)
-                editor.apply()
-            }
+            chooser.setOnSelectListener { path -> setupData(path) }
             true
         }
+    }
+
+    /**
+     * Checks the specified path for a valid morrowind installation, generates config files
+     * and saves the path to shared prefs if it's valid.
+     * If it isn't, an error is displayed to the user.
+     */
+    private fun setupData(path: String) {
+        val sharedPref = preferenceScreen.sharedPreferences
+
+        // reset the setting so that it's erased on error instead of keeping
+        // possibly stale value
+        var gameFiles = ""
+
+        val inst = GameInstaller(path)
+        if (inst.check()) {
+            inst.setNomedia()
+            if (!inst.convertIni(sharedPref.getString("pref_encoding",
+                    GameInstaller.DEFAULT_CHARSET_PREF)!!)) {
+                showError(R.string.data_error_title, R.string.ini_error_message)
+            } else {
+                gameFiles = path
+            }
+        } else {
+            showError(R.string.data_error_title, R.string.data_error_message)
+        }
+
+        with(sharedPref.edit()) {
+            putString("game_files", gameFiles)
+            apply()
+        }
+    }
+
+    /**
+     * Shows an alert dialog displaying a specific error
+     * @param title Title string resource
+     * @param message Message string resource
+     */
+    private fun showError(title: Int, message: Int) {
+        AlertDialog.Builder(activity)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(android.R.string.ok) { _: DialogInterface, _: Int -> }
+            .show()
     }
 
     override fun onResume() {
@@ -106,12 +149,16 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
         if (preference == null)
             return
         if (preference is EditTextPreference) {
-            val editTextPreference = preference as EditTextPreference?
-            editTextPreference!!.summary = editTextPreference.text
+            if (key == "pref_uiScaling" && (preference.text == null || preference.text.isEmpty()))
+                // Show "Auto (1.23)"
+                preference.summary = getString(R.string.uiScaling_auto,
+                    (activity as MainActivity).defaultScaling)
+            else
+                preference.summary = preference.text
         }
-        // Show selected value as a summary for data_files
-        if (key == "data_files") {
-            preference.summary = preference.sharedPreferences.getString("data_files", "")
+        // Show selected value as a summary for game_files
+        if (key == "game_files") {
+            preference.summary = preference.sharedPreferences.getString("game_files", "")
         }
     }
 

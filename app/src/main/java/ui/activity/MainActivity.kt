@@ -22,10 +22,12 @@ package ui.activity
 
 import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.DisplayMetrics
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
@@ -37,18 +39,15 @@ import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.ndk.CrashlyticsNdk
 import com.libopenmw.openmw.R
 import constants.Constants
+import file.GameInstaller
 
 import io.fabric.sdk.android.Fabric
 
 import java.io.BufferedReader
-import java.io.BufferedWriter
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
 import java.io.InputStreamReader
-import java.io.OutputStreamWriter
 
 import file.utils.CopyFilesFromAssets
 import mods.ModType
@@ -60,9 +59,12 @@ import utils.Utils.hideAndroidControls
 
 class MainActivity : AppCompatActivity() {
     private lateinit var prefs: SharedPreferences
+    var defaultScaling = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        defaultScaling = determineScaling()
+
         Fabric.with(this, Crashlytics(), CrashlyticsNdk())
         PermissionHelper.getWriteExternalStoragePermission(this@MainActivity)
         setContentView(R.layout.main)
@@ -124,6 +126,13 @@ class MainActivity : AppCompatActivity() {
         // and copy in the default values
         val copyFiles = CopyFilesFromAssets(this, Constants.CONFIGS_FILES_STORAGE_PATH)
         copyFiles.copyFileOrDir("libopenmw/config")
+
+        // Regenerate the openmw.fallback.cfg as well
+        val inst = GameInstaller(prefs.getString("game_files", "")!!)
+        if (inst.check()) {
+            inst.convertIni(prefs.getString("pref_encoding",
+                GameInstaller.DEFAULT_CHARSET_PREF)!!)
+        }
     }
 
     /**
@@ -151,44 +160,105 @@ class MainActivity : AppCompatActivity() {
      * Generates openmw.cfg using values from openmw-base.cfg combined with mod manager settings
      */
     private fun generateOpenmwCfg() {
-        var base = ""
+        // contents of openmw-base.cfg
+        val base: String
+        // contents of openmw.fallback.cfg
+        val fallback: String
+
+        // try to read the files
         try {
-            base = readFile(Constants.OPENMW_BASE_CFG)
+            base = File(Constants.OPENMW_BASE_CFG).readText()
+            // TODO: support user custom options
+            fallback = File(Constants.OPENMW_FALLBACK_CFG).readText()
         } catch (e: IOException) {
-            Log.e(TAG, "Failed to read openmw-base.cfg", e)
+            Log.e(TAG, "Failed to read openmw-base.cfg or openmw-fallback.cfg", e)
             Crashlytics.logException(e)
+            return
         }
 
-        val dataFiles = prefs!!.getString("data_files", "")
+        val dataFiles = GameInstaller.getDataFiles(this)
         val db = ModsDatabaseOpenHelper.getInstance(this)
-        val resources = ModsCollection(ModType.Resource, dataFiles!!, db)
+        val resources = ModsCollection(ModType.Resource, dataFiles, db)
         val plugins = ModsCollection(ModType.Plugin, dataFiles, db)
 
         try {
-            BufferedWriter(OutputStreamWriter(
-                FileOutputStream(Constants.OPENMW_CFG), "UTF-8")).use { writer ->
-                writer.write("# Automatically generated, do not edit\n")
+            // generate final output.cfg
+            var output = base + "\n" + fallback + "\n"
 
-                for (mod in resources.mods) {
-                    if (mod.enabled)
-                        writer.write("fallback-archive=" + mod.filename + "\n")
-                }
+            // output resources
+            resources.mods
+                .filter { it.enabled }
+                .forEach { output += "fallback-archive=${it.filename}\n" }
 
-                writer.write("\n" + base + "\n")
+            // output plugins
+            plugins.mods
+                .filter { it.enabled }
+                .forEach { output += "content=${it.filename}\n" }
 
-                for (mod in plugins.mods) {
-                    if (mod.enabled)
-                        writer.write("content=" + mod.filename + "\n")
-                }
-            }
+            // write everything to openmw.cfg
+            File(Constants.OPENMW_CFG).writeText(output)
         } catch (e: IOException) {
             Log.e(TAG, "Failed to generate openmw.cfg.", e)
             Crashlytics.logException(e)
         }
+    }
 
+    /**
+     * Shows an alert dialog displaying a specific message
+     * @param title Title string resource
+     * @param message Message string resource
+     */
+    private fun showAlert(title: Int, message: Int) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(android.R.string.ok) { _: DialogInterface, _: Int -> }
+            .show()
+    }
+
+    /**
+     * Determines required screen scaling based on resolution and physical size of the device
+     */
+    private fun determineScaling(): Float {
+        // The idea is to stretch an old-school 1024x768 monitor to the device screen
+        // Assume that 1x scaling corresponds to resolution of 1024x768
+        // Assume that the longest side of the device corresponds to the 1024 side
+        // Therefore scaling is calculated as longest size of the device divided by 1024
+        // Note that it doesn't take into account DPI at all. Which is fine for now, but in future
+        // we might want to add some bonus scaling to e.g. phone devices so that it's easier
+        // to click things.
+
+        val dm = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(dm)
+        return maxOf(dm.heightPixels, dm.widthPixels) / 1024.0f
     }
 
     public fun startGame() {
+        // First, check that there are game files present
+        val inst = GameInstaller(prefs.getString("game_files", "")!!)
+        if (!inst.check()) {
+            showAlert(R.string.no_data_files_title, R.string.no_data_files_message)
+            return
+        }
+
+        // Get scaling factor from config; if invalid or not provided, generate one
+        var scaling = 0f
+
+        try {
+            scaling = prefs.getString("pref_uiScaling", "")!!.toFloat()
+        } catch (e: NumberFormatException) {
+            // Reset the invalid setting
+            with(prefs.edit()) {
+                putString("pref_uiScaling", "")
+                apply()
+            }
+        }
+
+        // If scaling didn't get set, determine it automatically
+        if (scaling == 0f) {
+            scaling = defaultScaling
+        }
+
         val dialog = ProgressDialog.show(
             this, "", "Preparing for launch...", true)
 
@@ -223,12 +293,11 @@ class MainActivity : AppCompatActivity() {
                 file.Writer.write(
                     Constants.OPENMW_CFG, "resources", Constants.CONFIGS_FILES_STORAGE_PATH + (if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("multiplayer", false)) "/tes3mp-resources" else "/resources")
                 )
-                // TODO: it will crash if there's no value/invalid value provided
-                file.Writer.write(Constants.OPENMW_CFG, "data", '"'.toString() + prefs!!.getString("data_files", "") + '"'.toString())
+                file.Writer.write(Constants.OPENMW_CFG, "data", "\"" + inst.findDataFiles() + "\"")
 
-                file.Writer.write(Constants.OPENMW_CFG, "encoding", prefs!!.getString("pref_encoding", "win1252")!!)
+                file.Writer.write(Constants.OPENMW_CFG, "encoding", prefs!!.getString("pref_encoding", GameInstaller.DEFAULT_CHARSET_PREF)!!)
 
-                file.Writer.write(Constants.SETTINGS_CFG, "scaling factor", prefs!!.getString("pref_uiScaling", "1.0")!!)
+                file.Writer.write(Constants.SETTINGS_CFG, "scaling factor", "%.2f".format(scaling))
 
                 file.Writer.write(Constants.SETTINGS_CFG, "allow capsule shape", prefs!!.getString("pref_allowCapsuleShape", "true")!!)
 
@@ -274,11 +343,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-
         private const val TAG = "OpenMW-Launcher"
 
         var resolutionX = 0
         var resolutionY = 0
+<<<<<<< HEAD
 
         @JvmField var main: MainActivity?  = null
 
@@ -302,5 +371,7 @@ class MainActivity : AppCompatActivity() {
             fin.close()
             return ret
         }
+=======
+>>>>>>> upstream/master
     }
 }

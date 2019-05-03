@@ -16,7 +16,7 @@ ext {
     versionFile = new File(project.rootDir, 'app/src/main/assets/libopenmw/resources/version')
     calculateVersion = {
         stream = new FileInputStream(versionFile)
-        return stream.readLines()[0]
+        return stream.readLines()[0].trim() + "-" + project.android.defaultConfig.versionCode.toString()
     }
 }
 
@@ -36,9 +36,11 @@ android {
 
     defaultConfig {
         applicationId "com.libopenmw.openmw"
+        versionCode 13
+        versionName calculateVersion()
+
         minSdkVersion 21
         targetSdkVersion 27
-        versionName calculateVersion()
 
         ndk {
             abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
@@ -63,7 +65,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
 
@@ -74,6 +76,7 @@ dependencies {
 
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
     implementation 'com.crashlytics.sdk.android:crashlytics-ndk:2.0.5'
+    testImplementation 'junit:junit:4.12'
 }
 
 crashlytics {

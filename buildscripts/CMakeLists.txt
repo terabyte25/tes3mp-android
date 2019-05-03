@@ -45,8 +45,8 @@ set(OSG_VERSION 3.6.2)
 set(OSG_HASH SHA256=762c6601f32a761c7a0556766097558f453f23b983dd75bcf90f922e2d077a34)
 
 # https://github.com/OpenMW/openmw/commits/master
-set(OPENMW_VERSION 8d489793a95bc9a38f17100204f2f44a800e73ef)
-set(OPENMW_HASH SHA256=002ca8227b0c92b41fecba6ef18e220c43a945307345179db3a39a9d6e00019f)
+set(OPENMW_VERSION 05ee76951823d4e30c6618e2ebc8517d49243b94)
+set(OPENMW_HASH SHA256=a3fe0c9ce96779e66ec8ee2af01281c33342067a9004d8d4029209585227e4d2)
 
 # https://github.com/tes3mp/openmw-tes3mp/commits/0.7.0
 set(TES3MP_VERSION 292536439eeda58becdb7e441fe2e61ebb74529e)
@@ -463,7 +463,7 @@ set(OPENMW_PATCH
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0010-android-fix-context-being-lost-on-app-minimize.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0011-android-pause-the-game-on-minimize.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0012-engine-pause-sounds-when-game-is-paused.patch &&
-	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0013-engine-fix-window-creation-when-SDL-returns-differen.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0013-android-Update-default-settings-for-android.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/2344.patch
 )
 
