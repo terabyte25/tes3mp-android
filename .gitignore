@@ -11,3 +11,4 @@ app/wrap
 fabric.properties
 captures
 mainbuild.sh
+app/release

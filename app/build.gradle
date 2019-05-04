@@ -35,8 +35,8 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.libopenmw.openmw"
-        versionCode 13
+        applicationId "is.terrabyte.omw"
+        versionCode 14
         versionName calculateVersion()
 
         minSdkVersion 21
@@ -54,6 +54,23 @@ android {
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "omw_${variant.buildType.name}_${defaultConfig.versionName}.apk"
+        }
     }
 }
 repositories {

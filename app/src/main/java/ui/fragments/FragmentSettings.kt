@@ -20,16 +20,19 @@
 
 package ui.fragments
 
+import android.Manifest
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.preference.EditTextPreference
 import android.preference.Preference
 import android.preference.PreferenceFragment
 import android.preference.PreferenceGroup
+import androidx.core.content.ContextCompat
 
 import com.codekidlabs.storagechooser.StorageChooser
 import com.libopenmw.openmw.R
@@ -39,6 +42,8 @@ import ui.activity.ConfigureControls
 import ui.activity.MainActivity
 import ui.activity.ModsActivity
 import ui.activity.BrowserActivity;
+import java.io.File
+import java.util.*
 
 class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener {
 
@@ -67,17 +72,22 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
         }
 
         findPreference("game_files").setOnPreferenceClickListener {
-            val chooser = StorageChooser.Builder()
-                .withActivity(activity)
-                .withFragmentManager(fragmentManager)
-                .withMemoryBar(true)
-                .allowCustomPath(true)
-                .setType(StorageChooser.DIRECTORY_CHOOSER)
-                .build()
+            if (ContextCompat.checkSelfPermission(activity,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                showError(R.string.permissions_error_title, R.string.permissions_error_message)
+            } else {
+                val chooser = StorageChooser.Builder()
+                    .withActivity(activity)
+                    .withFragmentManager(fragmentManager)
+                    .withMemoryBar(true)
+                    .allowCustomPath(true)
+                    .setType(StorageChooser.DIRECTORY_CHOOSER)
+                    .build()
 
-            chooser.show()
+                chooser.show()
 
-            chooser.setOnSelectListener { path -> setupData(path) }
+                chooser.setOnSelectListener { path -> setupData(path) }
+            }
             true
         }
     }
@@ -97,8 +107,7 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
         val inst = GameInstaller(path)
         if (inst.check()) {
             inst.setNomedia()
-            if (!inst.convertIni(sharedPref.getString("pref_encoding",
-                    GameInstaller.DEFAULT_CHARSET_PREF)!!)) {
+            if (!inst.convertIni(sharedPref.getString("pref_encoding", GameInstaller.DEFAULT_CHARSET_PREF)!!)) {
                 showError(R.string.data_error_title, R.string.ini_error_message)
             } else {
                 gameFiles = path
@@ -151,8 +160,8 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
         if (preference is EditTextPreference) {
             if (key == "pref_uiScaling" && (preference.text == null || preference.text.isEmpty()))
                 // Show "Auto (1.23)"
-                preference.summary = getString(R.string.uiScaling_auto,
-                    (activity as MainActivity).defaultScaling)
+                preference.summary = getString(R.string.uiScaling_auto)
+                    .format(Locale.ROOT, (activity as MainActivity).defaultScaling)
             else
                 preference.summary = preference.text
         }

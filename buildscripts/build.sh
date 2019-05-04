@@ -204,17 +204,8 @@ if [[ $DEPLOY_RESOURCES = "true" ]]; then
 	mkdir -p "$DST/openmw/"
 	# cp "$SRC/settings-default.cfg" "$DST/openmw/" for now
 	cp "$SRC/gamecontrollerdb.txt" "$DST/openmw/"
-	cp "$SRCTES3MP/tes3mp-client-default.cfg" "$DST/openmw/"
-	cp "$DIR/../app/settings-default.cfg" "$DST/openmw/"
-
-	# local config
-	mkdir -p "$DST/config/openmw/"
-	# TODO: do we really need this twice?
-	cp "$SRC/gamecontrollerdb.txt" "$DST/config/openmw/"
-	cp "$DIR/../app/openmw-base.cfg" "$DST/config/openmw/openmw-base.cfg"
-	cp "$DIR/../app/settings-base.cfg" "$DST/config/openmw/settings.cfg"
-	# not really a good idea to fake commit hashes for tes3mp
-	cp "$DIR/../app/version" "$DST/tes3mp-resources/version"
+	cat "$SRC/openmw.cfg" | grep -v "data=" | grep -v "data-local=" >> "$DST/openmw/openmw.base.cfg"
+	cat "$DIR/../app/openmw.base.cfg" >> "$DST/openmw/openmw.base.cfg"
 fi
 echo "==> Making your debugging life easier"
 
