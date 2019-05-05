@@ -76,12 +76,9 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.content_frame, FragmentSettings()).commit()
 
         val fab = findViewById<FloatingActionButton>(R.id.fab)
-<<<<<<< HEAD
-        fab.setOnClickListener { startGame() }
+        fab.setOnClickListener { checkStartGame() }
 
         main = this
-=======
-        fab.setOnClickListener { checkStartGame() }
     }
 
     /**
@@ -116,7 +113,6 @@ class MainActivity : AppCompatActivity() {
 
         // If everything's alright, start the game
         startGame()
->>>>>>> upstream/master
     }
 
     private fun deleteRecursive(fileOrDirectory: File) {
@@ -216,7 +212,6 @@ class MainActivity : AppCompatActivity() {
             plugins.mods
                 .filter { it.enabled }
                 .forEach { output += "content=${it.filename}\n" }
-
             // write everything to openmw.cfg
             File(Constants.OPENMW_CFG).writeText(output)
         } catch (e: IOException) {
@@ -338,13 +333,10 @@ class MainActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     reinstallStaticFiles()
                 }
-<<<<<<< HEAD
                 */
-=======
 
                 val inst = GameInstaller(prefs.getString("game_files", "")!!)
 
->>>>>>> upstream/master
                 // Regenerate the fallback file in case user edits their Morrowind.ini
                 inst.convertIni(prefs.getString("pref_encoding", GameInstaller.DEFAULT_CHARSET_PREF)!!)
 
