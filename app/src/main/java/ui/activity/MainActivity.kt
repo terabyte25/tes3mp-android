@@ -76,9 +76,47 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.content_frame, FragmentSettings()).commit()
 
         val fab = findViewById<FloatingActionButton>(R.id.fab)
+<<<<<<< HEAD
         fab.setOnClickListener { startGame() }
 
         main = this
+=======
+        fab.setOnClickListener { checkStartGame() }
+    }
+
+    /**
+     * Checks that the game is properly installed and if so, starts the game
+     * - the game files must be selected
+     * - there must be at least 1 activated mod (user can ignore this warning)
+     */
+    private fun checkStartGame() {
+        // First, check that there are game files present
+        val inst = GameInstaller(prefs.getString("game_files", "")!!)
+        if (!inst.check()) {
+            showAlert(R.string.no_data_files_title, R.string.no_data_files_message)
+            return
+        }
+
+        // Second, check if user has at least one mod enabled
+        val plugins = ModsCollection(ModType.Plugin, inst.findDataFiles(),
+            ModsDatabaseOpenHelper.getInstance(this))
+        if (plugins.mods.count { it.enabled } == 0) {
+            // No mods enabled, show a warning
+            AlertDialog.Builder(this)
+                .setTitle(R.string.no_content_files_title)
+                .setMessage(R.string.no_content_files_message)
+                .setNegativeButton(R.string.no_content_files_dismiss) { _, _ -> startGame() }
+                .setPositiveButton(R.string.configure_mods) { _, _ ->
+                    this.startActivity(Intent(this, ModsActivity::class.java))
+                }
+                .show()
+
+            return
+        }
+
+        // If everything's alright, start the game
+        startGame()
+>>>>>>> upstream/master
     }
 
     private fun deleteRecursive(fileOrDirectory: File) {
@@ -115,7 +153,7 @@ class MainActivity : AppCompatActivity() {
             GameActivity::class.java)
         finish()
 
-        this@MainActivity.startActivity(intent)
+        this@MainActivity.startActivityForResult(intent, 1)
     }
 
 
@@ -262,13 +300,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     public fun startGame() {
-        // First, check that there are game files present
-        val inst = GameInstaller(prefs.getString("game_files", "")!!)
-        if (!inst.check()) {
-            showAlert(R.string.no_data_files_title, R.string.no_data_files_message)
-            return
-        }
-
         // Get scaling factor from config; if invalid or not provided, generate one
         var scaling = 0f
 
@@ -307,7 +338,13 @@ class MainActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     reinstallStaticFiles()
                 }
+<<<<<<< HEAD
                 */
+=======
+
+                val inst = GameInstaller(prefs.getString("game_files", "")!!)
+
+>>>>>>> upstream/master
                 // Regenerate the fallback file in case user edits their Morrowind.ini
                 inst.convertIni(prefs.getString("pref_encoding", GameInstaller.DEFAULT_CHARSET_PREF)!!)
 
@@ -323,6 +360,11 @@ class MainActivity : AppCompatActivity() {
                 file.Writer.write(Constants.SETTINGS_DEFAULT_CFG, "scaling factor", "%.2f".format(Locale.ROOT, scaling))
 
                 file.Writer.write(Constants.SETTINGS_DEFAULT_CFG, "allow capsule shape", prefs!!.getString("pref_allowCapsuleShape", "true")!!)
+
+                file.Writer.write(Constants.SETTINGS_DEFAULT_CFG,
+                    "allow unsafe optimizations",
+                    prefs.getString("pref_unsafe_state_graph",
+                                    getString(R.string.pref_unsafe_state_graph_default))!!)
 
                 file.Writer.write(Constants.SETTINGS_DEFAULT_CFG, "preload enabled", prefs!!.getString("pref_preload", "false")!!)
 
@@ -347,23 +389,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.action_reset_config -> {
                 removeUserConfig()
                 removeStaticFiles()
                 Toast.makeText(this, getString(R.string.config_was_reset), Toast.LENGTH_SHORT).show()
+                true
             }
 
-            R.id.action_about -> AlertDialog.Builder(this)
-                .setTitle(getString(R.string.about_title))
-                .setMessage(R.string.about_contents)
-                .show()
+            R.id.action_about -> {
+                val text = assets.open("libopenmw/3rdparty-licenses.txt")
+                    .bufferedReader()
+                    .use { it.readText() }
 
-            else -> {
+                AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.about_title))
+                    .setMessage(text)
+                    .show()
+                true
             }
+
+            else -> super.onOptionsItemSelected(item)
         }
-
-        return super.onOptionsItemSelected(item)
     }
 
     companion object {

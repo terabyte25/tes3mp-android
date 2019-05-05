@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">OpenMW</string>
+    <string name="app_name">OMW</string>
 
     <string-array name="pref_encoding_entries">
         <item>Central and Eastern European (win1250)</item>
@@ -80,6 +80,17 @@
         <item>60</item>
     </string-array>
 
+    <string name="pref_unsafe_state_graph">Enable unsafe graphics optimizations</string>
+    <string-array name="pref_unsafe_state_graph_entries">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+    <string-array name="pref_unsafe_state_graph_values">
+        <item>true</item>
+        <item>false</item>
+    </string-array>
+    <string name="pref_unsafe_state_graph_default">false</string>
+
     <string name="pref_physicsFPS_default">15</string>
 
     <string name="pref_allowCapsuleShape">Force a simple collision box for actors</string>
@@ -126,18 +137,35 @@
     <string name="mods">Mods…</string>
     <string name="action_about">About</string>
 
-    <string name="about_title">About OpenMW</string>
-    <string name="about_contents">TODO: about text. Also put version info here.</string>
+    <string name="about_title">About OMW</string>
     <string name="activity_mods">Mods</string>
     <string name="tab_plugins">Plugins</string>
     <string name="tab_resources">Resources</string>
     <string name="data_error_title">Error locating data files</string>
     <string name="data_error_message">Please select a directory which contains both the \"Morrowind.ini\" file and the \"Data Files\" directory.</string>
     <string name="permissions_error_title">No permissions</string>
-    <string name="permissions_error_message">OpenMW needs storage permissions to locate and access Morrowind game files. Please grant this permission through settings.</string>
+    <string name="permissions_error_message">OMW needs storage permissions to locate and access Morrowind game files. Please grant this permission through settings.</string>
     <string name="ini_error_message">Failure transforming the configuration file. Please ensure your \"Morrowind.ini\" is well-formed.</string>
 
     <string name="no_data_files_title">Data files not found</string>
-    <string name="no_data_files_message">You must copy Morrowind game files to your device and select the path under "Game files" before the game can be played.</string>
+    <string name="no_data_files_message">You must copy Morrowind game files to your device and select the path under \"Game files\" before the game can be played.</string>
+    <string name="category_performance">Performance</string>
+
+    <string name="no_content_files_title">No content files!</string>
+    <string name="no_content_files_message">There are no content files enabled. Before the game can run, you must activate at least one plugin file from the \"Mods…\" menu.</string>
+    <string name="no_content_files_dismiss">Proceed anyway</string>
+
+    <string name="configure_mods">Configure mods</string>
+
+    <string name="pref_mouse_mode">Default mouse mode in menus</string>
+    <string-array name="pref_mouse_mode_entries">
+        <item>Relative joystick controls</item>
+        <item>Absolute touch controls</item>
+    </string-array>
+    <string-array name="pref_mouse_mode_values">
+        <item>joystick</item>
+        <item>touch</item>
+    </string-array>
+    <string name="pref_mouse_mode_default">joystick</string>
 
 </resources>

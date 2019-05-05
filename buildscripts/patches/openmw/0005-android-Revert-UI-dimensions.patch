@@ -1,17 +1,17 @@
-From 4eea4edd1b1267cf9f0b42d3a3dc8eb7018c9763 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Ilya Zhuravlev <whatever@xyz.is>
 Date: Mon, 1 Apr 2019 13:32:32 -0400
-Subject: [PATCH 05/14] android: Revert UI dimensions
+Subject: [PATCH] android: Revert UI dimensions
 
 ---
  files/settings-default.cfg | 95 ++++++++++++++++++++------------------
  1 file changed, 49 insertions(+), 46 deletions(-)
 
 diff --git a/files/settings-default.cfg b/files/settings-default.cfg
-index 7e7e04b78..989224190 100644
+index fb5862fad..1675261d5 100644
 --- a/files/settings-default.cfg
 +++ b/files/settings-default.cfg
-@@ -480,42 +480,45 @@ refraction scale = 1.0
+@@ -482,42 +482,45 @@ refraction scale = 1.0
  # screen size. (0.0 to 1.0).  X & Y, Width & Height.
  
  # Stats window displaying level, race, class, skills and stats.
@@ -77,7 +77,7 @@ index 7e7e04b78..989224190 100644
  
  # Alchemy window for crafting potions.
  alchemy x = 0.25
-@@ -524,46 +527,46 @@ alchemy w = 0.5
+@@ -526,46 +529,46 @@ alchemy w = 0.5
  alchemy h = 0.5
  
  # Console command window for debugging commands.
