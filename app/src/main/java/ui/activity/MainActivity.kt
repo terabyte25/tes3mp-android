@@ -64,11 +64,10 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var prefs: SharedPreferences
-    var defaultScaling = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        defaultScaling = determineScaling()
+        MyApp.app.defaultScaling = determineScaling()
 
         main = this
 
@@ -351,7 +350,7 @@ class MainActivity : AppCompatActivity() {
 
         // If scaling didn't get set, determine it automatically
         if (scaling == 0f) {
-            scaling = defaultScaling
+            scaling = MyApp.app.defaultScaling
         }
 
         val dialog = ProgressDialog.show(
@@ -364,7 +363,7 @@ class MainActivity : AppCompatActivity() {
 
         val th = Thread {
             try {
-                /*
+
                 // Only reinstall static files if they are of a mismatched version
                 try {
                     val stamp = File(Constants.VERSION_STAMP).readText().trim()
@@ -374,7 +373,7 @@ class MainActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     reinstallStaticFiles()
                 }
-                */
+
 
                 val inst = GameInstaller(prefs.getString("game_files", "")!!)
 

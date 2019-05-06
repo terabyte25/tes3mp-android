@@ -31,7 +31,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.ApplicationInfo;
 import android.text.method.ScrollingMovementMethod;
 
+import ui.activity.GameActivity;
 import ui.activity.MainActivity;
+import ui.activity.MouseMode;
 
 /**
     SDL Activity
@@ -1433,6 +1435,10 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         // drop event unless the mouse is shown (i.e. unless we're in a mouse-enabled menu)
         if ((action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) &&
                 SDLActivity.isMouseShown() == 0)
+            return false;
+
+        // For joystick mode don't process touch events at all
+        if (GameActivity.Companion.getMouseMode() == MouseMode.Joystick)
             return false;
 
         // !!! FIXME: dump this SDK check after 2.0.4 ships and require API14.
