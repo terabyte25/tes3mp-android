@@ -204,6 +204,9 @@ if [[ $DEPLOY_RESOURCES = "true" ]]; then
 	mkdir -p "$DST/openmw/"
 	# cp "$SRC/settings-default.cfg" "$DST/openmw/" for now
 	cp "$SRC/gamecontrollerdb.txt" "$DST/openmw/"
+	cp "$SRCTES3MP/tes3mp-client-default.cfg" "$DST/openmw/"
+	cp "$DIR/../app/version" "$DST/tes3mp-resources/version"
+	cp "$DIR/../app/settings-default.cfg" "$DST/openmw/"
 	cat "$SRC/openmw.cfg" | grep -v "data=" | grep -v "data-local=" >> "$DST/openmw/openmw.base.cfg"
 	cat "$DIR/../app/openmw.base.cfg" >> "$DST/openmw/openmw.base.cfg"
 
