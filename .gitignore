@@ -12,3 +12,5 @@ fabric.properties
 captures
 mainbuild.sh
 app/release
+*.apk
+output.json
