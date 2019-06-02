@@ -23,11 +23,13 @@ package ui.activity
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.AlertDialog
+import android.app.DownloadManager
 import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.*
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.preference.PreferenceManager
 import android.util.DisplayMetrics
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -40,6 +42,10 @@ import com.bugsnag.android.Bugsnag
 
 import com.libopenmw.openmw.BuildConfig
 import com.libopenmw.openmw.R
+import com.github.javiersantos.appupdater.AppUpdater;
+import com.github.javiersantos.appupdater.enums.Display;
+import com.github.javiersantos.appupdater.enums.UpdateFrom;
+
 import constants.Constants
 import file.GameInstaller
 
@@ -83,6 +89,14 @@ class MainActivity : AppCompatActivity() {
         if (prefs.getString("bugsnag_consent", "")!! == "") {
             askBugsnagConsent()
         }
+
+        /**
+        AppUpdater(this)
+            .setUpdateFrom(UpdateFrom.GITHUB)
+            .setButtonUpdateClickListener{ _, _ -> update() }
+            .setGitHubUserAndRepo("terabyte25", "tes3mp-android")
+            .start();
+        */
     }
 
     /**
@@ -345,6 +359,36 @@ class MainActivity : AppCompatActivity() {
      */
     private fun removeUserConfig() {
         deleteRecursive(File(Constants.USER_CONFIG))
+    }
+
+    private fun update() {
+        var destination: String = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/OpenMW-tes3mp-update.apk"
+        val uri = Uri.parse("file://" + destination)
+        val file = File(destination)
+        if (file.exists())
+            file.delete()
+        val url = "https://github.com/terabyte25/tes3mp-android/releases/latest/download/app-debug.apk"
+        val request = DownloadManager.Request(Uri.parse(url))
+        request.setDescription("Downloading the latest version of OpenMW")
+        request.setTitle("OpenMW update")
+        request.allowScanningByMediaScanner()
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+        request.setDestinationUri(uri)
+        val manager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadId = manager.enqueue(request)
+        val onComplete = object:BroadcastReceiver() {
+            
+            override fun onReceive(ctxt:Context, intent:Intent) {
+                val install = Intent(Intent.ACTION_VIEW)
+                install.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                install.setDataAndType(uri,
+                                    "application/vnd.android.package-‌​archive")
+                startActivity(install)
+                unregisterReceiver(this)
+                finish()
+            }
+        }
+        registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
     }
 
     public fun startGame() {

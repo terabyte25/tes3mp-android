@@ -13,6 +13,8 @@ The second method is used to connect to servers which are not displayed on the b
 
 If you want to go back to Singleplayer, simply untoggle the Multiplayer setting in the settings menu, and you can just start the game into Singleplayer by pressing the play icon.
 
+[Google Play](https://play.google.com/store/apps/details?id=is.xyz.omw) | [Google Play (Nightly)](https://play.google.com/store/apps/details?id=is.xyz.omw_nightly) | [FAQ & Info](https://omw.xyz.is/)
+
 ## Building
 
 There are two steps for building tes3mp for Android. The first step is building C/C++ libraries. The second step is building the Java launcher.
@@ -69,9 +71,3 @@ adb logcat | ./tool/asan_symbolize.py --demangle -s ./symbols/armeabi-v7a/
 ### Source code
 
 Original Java code written by sandstranger. Build scripts originally written by sandstranger and bwhaines.
-
-### Icons
-
-Some of the icons used in this project (keyboard.xml, load.xml, pause.xml, save.xml) are Font Awesome icons, distributed under the terms of the CC-BY 4.0 license. See https://fontawesome.com/license/free for more details.
-
-mouse.png - https://github.com/FortAwesome/Font-Awesome/issues/2376#issuecomment-215401368

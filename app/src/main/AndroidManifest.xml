@@ -59,7 +59,7 @@
             android:screenOrientation="fullUser"
             android:theme="@style/MyTheme"
             android:exported="true"
-            android:label="browser"
+            android:label="Server Browser"
             />
 
     </application>

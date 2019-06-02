@@ -8,6 +8,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.MenuItem;
 
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -41,6 +42,12 @@ public class BrowserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.browser);
+
+        setSupportActionBar(findViewById(R.id.browser_toolbar));
+
+        // Enable the "back" icon in the action bar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         listView = (ListView) findViewById(R.id.list);
 
         pullToRefresh = (SwipeRefreshLayout) findViewById(R.id.pullToRefresh);
@@ -131,6 +138,17 @@ public class BrowserActivity extends AppCompatActivity {
         sortPlayersFilter = false;
         sortAlphabetFilter = true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
+    
 }
 
 

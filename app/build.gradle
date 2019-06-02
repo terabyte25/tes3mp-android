@@ -27,7 +27,7 @@ android {
 
     defaultConfig {
         applicationId "is.terrabyte.omw"
-        versionCode 14
+        versionCode 17
         versionName calculateVersion()
 
         minSdkVersion 21
@@ -74,7 +74,7 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "omw_${variant.buildType.name}_${defaultConfig.versionName}.apk"
+            outputFileName = "app-debug.apk"
         }
     }
 }
@@ -96,6 +96,8 @@ dependencies {
     implementation "org.jetbrains.anko:anko-sqlite:$anko_version"
 
     implementation 'com.bugsnag:bugsnag-android-ndk:4.+'
+
+    implementation 'com.github.javiersantos:AppUpdater:2.7'
 
     testImplementation 'junit:junit:4.12'
 }
