@@ -27,10 +27,10 @@ android {
 
     defaultConfig {
         applicationId "is.terrabyte.omw"
-        versionCode 17
+        versionCode 19
         versionName calculateVersion()
 
-        minSdkVersion 21
+        minSdkVersion 22
         targetSdkVersion 27
 
         ndk {
