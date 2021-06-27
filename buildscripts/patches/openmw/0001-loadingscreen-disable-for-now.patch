@@ -1,7 +1,7 @@
-From 80d183e9bbcd8dbb3bbd129b1551fff61da0bc01 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Ilya Zhuravlev <whatever@xyz.is>
 Date: Sun, 10 Feb 2019 19:11:34 -0500
-Subject: [PATCH 1/4] loadingscreen: disable for now
+Subject: [PATCH] loadingscreen: disable for now
 
 ---
  apps/openmw/mwgui/loadingscreen.cpp | 2 ++

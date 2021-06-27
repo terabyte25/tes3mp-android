@@ -7,6 +7,7 @@ cd $DIR
 export ARCH="arm"
 export CCACHE="true"
 ASAN="false"
+DEPLOY_RESOURCES="true"
 LTO="false"
 BUILD_TYPE="release"
 CFLAGS="-fPIC"
@@ -18,6 +19,7 @@ usage() {
 	echo "	--help: print this message"
 	echo "	--arch: build for specified architecture [arm, arm64, x86_64, x86] (default: arm)"
 	echo "	--asan: build with AddressSanitizer enabled"
+	echo "	--no-resources: don't deploy the resources (used in full-build.sh)"
 	echo "	--lto: use LTO for linking"
 	echo "	--ccache: use ccache to speed up repeated builds"
 	echo "	--debug: produce a debug build without optimizations"
@@ -56,6 +58,10 @@ while [[ $# -gt 0 ]]; do
 			;;
 		--release)
 			BUILD_TYPE="release"
+			shift
+			;;
+		--no-resources)
+			DEPLOY_RESOURCES="false"
 			shift
 			;;
 		*)
@@ -129,9 +135,8 @@ mkdir -p prefix/$ARCH/
 # symlink lib64 -> lib so we don't get half the libs in one directory half in another
 mkdir -p prefix/$ARCH/lib
 ln -sf lib prefix/$ARCH/lib64
-mkdir -p prefix/$ARCH/osg_{fork,mainline}/lib
-ln -sf lib prefix/$ARCH/osg_fork/lib64
-ln -sf lib prefix/$ARCH/osg_mainline/lib64
+mkdir -p prefix/$ARCH/osg/lib
+ln -sf lib prefix/$ARCH/osg/lib64
 
 # generate command_wrapper.sh
 cat include/command_wrapper_head.sh.in | \
@@ -172,10 +177,8 @@ rm -rf ../app/src/main/jniLibs/$ABI/
 mkdir -p ../app/src/main/jniLibs/$ABI/
 
 # libopenmw.so is a special case
-find build/$ARCH/openmw_osg_mainline-prefix/ -iname "libopenmw.so" -exec cp "{}" ../app/src/main/jniLibs/$ABI/libopenmw_osg_mainline.so \;
-find build/$ARCH/openmw_osg_fork-prefix/ -iname "libopenmw.so" -exec cp "{}" ../app/src/main/jniLibs/$ABI/libopenmw_osg_fork.so \;
-find build/$ARCH/tes3mp_osg_mainline-prefix/ -iname "libtes3mp.so" -exec cp "{}" ../app/src/main/jniLibs/$ABI/libtes3mp_osg_mainline.so \;
-find build/$ARCH/tes3mp_osg_fork-prefix/ -iname "libtes3mp.so" -exec cp "{}" ../app/src/main/jniLibs/$ABI/libtes3mp_osg_fork.so \;
+find build/$ARCH/openmw-prefix/ -iname "libopenmw.so" -exec cp "{}" ../app/src/main/jniLibs/$ABI/libopenmw.so \;
+find build/$ARCH/tes3mp-prefix/ -iname "libtes3mp.so" -exec cp "{}" ../app/src/main/jniLibs/$ABI/libtes3mp.so \;
 
 # copy over libs we compiled
 cp prefix/$ARCH/lib/{libopenal,libSDL2,libGL}.so ../app/src/main/jniLibs/$ABI/
@@ -183,11 +186,12 @@ cp prefix/$ARCH/lib/{libopenal,libSDL2,libGL}.so ../app/src/main/jniLibs/$ABI/
 # copy over libc++_shared
 find ./toolchain/$ARCH/ -iname "libc++_shared.so" -exec cp "{}" ../app/src/main/jniLibs/$ABI/ \;
 
+if [[ $DEPLOY_RESOURCES = "true" ]]; then
 	echo "==> Deploying resources"
 
 	DST=$DIR/../app/src/main/assets/libopenmw/
-	SRC=build/$ARCH/openmw_osg_mainline-prefix/src/openmw_osg_mainline-build/
-	SRCTES3MP=build/$ARCH/tes3mp_osg_mainline-prefix/src/tes3mp_osg_mainline-build/
+	SRC=build/$ARCH/openmw-prefix/src/openmw-build/
+	SRCTES3MP=build/$ARCH/tes3mp-prefix/src/tes3mp-build/
 
 	rm -rf "$DST" && mkdir -p "$DST"
 
@@ -201,27 +205,22 @@ find ./toolchain/$ARCH/ -iname "libc++_shared.so" -exec cp "{}" ../app/src/main/
 	# cp "$SRC/settings-default.cfg" "$DST/openmw/" for now
 	cp "$SRC/gamecontrollerdb.txt" "$DST/openmw/"
 	cp "$SRCTES3MP/tes3mp-client-default.cfg" "$DST/openmw/"
-	cp "$DIR/../app/settings-default.cfg" "$DST/openmw/"
-
-	# local config
-	mkdir -p "$DST/config/openmw/"
-	# TODO: do we really need this twice?
-	cp "$SRC/gamecontrollerdb.txt" "$DST/config/openmw/"
-	cp "$DIR/../app/openmw-base.cfg" "$DST/config/openmw/openmw.cfg"
-	cp "$DIR/../app/settings-base.cfg" "$DST/config/openmw/settings.cfg"
-	# not really a good idea to fake commit hashes for tes3mp
 	cp "$DIR/../app/version" "$DST/tes3mp-resources/version"
+	cp "$DIR/../app/settings-default.cfg" "$DST/openmw/"
+	cat "$SRC/openmw.cfg" | grep -v "data=" | grep -v "data-local=" >> "$DST/openmw/openmw.base.cfg"
+	cat "$DIR/../app/openmw.base.cfg" >> "$DST/openmw/openmw.base.cfg"
 
+	# licensing info
+	cp "$DIR/../3rdparty-licenses.txt" "$DST"
+fi
 echo "==> Making your debugging life easier"
 
 # copy unstripped libs to aid debugging
 rm -rf "./symbols/$ABI/" && mkdir -p "./symbols/$ABI/"
 cp "./build/$ARCH/openal-prefix/src/openal-build/libopenal.so" "./symbols/$ABI/"
 cp "./build/$ARCH/sdl2-prefix/src/sdl2-build/obj/local/$ABI/libSDL2.so" "./symbols/$ABI/"
-cp "./build/$ARCH/openmw_osg_mainline-prefix/src/openmw_osg_mainline-build/libopenmw.so" "./symbols/$ABI/libopenmw_osg_mainline.so"
-cp "./build/$ARCH/openmw_osg_fork-prefix/src/openmw_osg_fork-build/libopenmw.so" "./symbols/$ABI/libopenmw_osg_fork.so"
-cp "./build/$ARCH/tes3mp_osg_mainline-prefix/src/tes3mp_osg_mainline-build/libtes3mp.so" "./symbols/$ABI/libtes3mp_osg_mainline.so"
-cp "./build/$ARCH/tes3mp_osg_fork-prefix/src/tes3mp_osg_fork-build/libtes3mp.so" "./symbols/$ABI/libtes3mp_osg_fork.so"
+cp "./build/$ARCH/openmw-prefix/src/openmw-build/libopenmw.so" "./symbols/$ABI/libopenmw.so"
+cp "./build/$ARCH/tes3mp-prefix/src/tes3mp-build/libtes3mp.so" "./symbols/$ABI/libtes3mp.so"
 cp "./build/$ARCH/gl4es-prefix/src/gl4es-build/obj/local/$ABI/libGL.so" "./symbols/$ABI/"
 cp "../app/src/main/jniLibs/$ABI/libc++_shared.so" "./symbols/$ABI/"
 

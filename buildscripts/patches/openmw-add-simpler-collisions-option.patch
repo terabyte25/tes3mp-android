@@ -1,3 +1,13 @@
+From 8c720d46043fdb8ee1a87efa2789bcfa324d1d87 Mon Sep 17 00:00:00 2001
+From: Ilya Zhuravlev <whatever@xyz.is>
+Date: Mon, 1 Apr 2019 13:32:49 -0400
+Subject: [PATCH 06/13] Add an option to enable simple bounding box
+
+---
+ apps/openmw/mwphysics/actor.cpp | 5 ++++-
+ files/settings-default.cfg      | 3 +++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
 diff --git a/apps/openmw/mwphysics/actor.cpp b/apps/openmw/mwphysics/actor.cpp
 index 632d32c26..6b5c115d4 100644
 --- a/apps/openmw/mwphysics/actor.cpp
@@ -29,10 +39,10 @@ index 632d32c26..6b5c115d4 100644
          mShape.reset(new btCapsuleShapeZ(mHalfExtents.x(), 2*mHalfExtents.z() - 2*mHalfExtents.x()));
          mRotationallyInvariant = true;
 diff --git a/files/settings-default.cfg b/files/settings-default.cfg
-index db3d7e75b..3e08bbb0e 100644
+index 989224190..be699ed32 100644
 --- a/files/settings-default.cfg
 +++ b/files/settings-default.cfg
-@@ -242,6 +242,9 @@ strength influences hand to hand = 0
+@@ -255,6 +255,9 @@ strength influences hand to hand = 0
  # Render holstered weapons (with quivers and scabbards), requires modded assets
  weapon sheathing = false
  

@@ -5,8 +5,8 @@ set(LIBJPEG_TURBO_VERSION 1.5.3)
 set(LIBJPEG_TURBO_HASH SHA256=b24890e2bb46e12e72a79f7e965f409f4e16466d00e1dd15d93d73ee6b592523)
 
 # http://www.libpng.org/pub/png/libpng.html
-set(LIBPNG_VERSION 1.6.36)
-set(LIBPNG_HASH SHA256=eceb924c1fa6b79172fdfd008d335f0e59172a86a66481e09d4089df872aa319)
+set(LIBPNG_VERSION 1.6.37)
+set(LIBPNG_HASH SHA256=505e70834d35383537b6491e7ae8641f1a4bed1876dbfe361201fc80868d88ca)
 
 # https://www.freetype.org/index.html#news
 set(FREETYPE2_VERSION 2.10.0)
@@ -37,20 +37,16 @@ set(MYGUI_VERSION 3.2.2)
 set(MYGUI_HASH SHA256=0a28d7ec8a47993cb68deb48b36331e28f12dd92580b709eaef21d599b67a78f)
 
 # https://github.com/ptitSeb/gl4es
-set(GL4ES_VERSION 9faa54451f28037a2150d2da32df721038ac741e)
-set(GL4ES_HASH SHA256=8866654d345150188b6c33738a576f5de2326132cd3ab3e206e94c87c675deb0)
+set(GL4ES_VERSION 152d17667a0d0521361faf0294f41263db6c56f5)
+set(GL4ES_HASH SHA256=bed859c21731467e7b6363667778615ebe9accd1c84f8279e0287e33bcd4be08)
 
 # https://github.com/openscenegraph/OpenSceneGraph/releases
-set(OSG_MAINLINE_VERSION 3.6.2)
-set(OSG_MAINLINE_HASH SHA256=762c6601f32a761c7a0556766097558f453f23b983dd75bcf90f922e2d077a34)
-
-# https://github.com/OpenMW/osg/commits/master
-set(OSG_FORK_VERSION ecedf3232c2f1b3b6a2f06f77ea37a9afb6a93f5)
-set(OSG_FORK_HASH SHA256=254f0ce0e236aa80700877ee8664430c1f491be78ea1118bcd53178260edb4b5)
+set(OSG_VERSION 3.6.2)
+set(OSG_HASH SHA256=762c6601f32a761c7a0556766097558f453f23b983dd75bcf90f922e2d077a34)
 
 # https://github.com/OpenMW/openmw/commits/master
-set(OPENMW_VERSION 2cc359a20561f691222b36d250cda69459a6b1fb)
-set(OPENMW_HASH SHA256=3fc1b28cc44d4bcbf6049c6b965813ddd75f21a4687b72c8342c02c85d8bd63a)
+set(OPENMW_VERSION 2436652181b339f237ef62395c24ad3d0e3b7c8e)
+set(OPENMW_HASH SHA256=253856d492ff484dab422e278ff6994f12a583ab88636757fd2ea91be2023e9c)
 
 # https://github.com/tes3mp/openmw-tes3mp/commits/0.7.0
 set(TES3MP_VERSION 292536439eeda58becdb7e441fe2e61ebb74529e)
@@ -70,10 +66,8 @@ set(prefix ${CMAKE_INSTALL_PREFIX})
 set(host ${ndk_triplet})
 set(android_platform android-${ANDROID_API})
 set(app_abi ${ABI})
-set(osg_mainline_plugins_dir ${prefix}/osg_mainline/lib/osgPlugins-${OSG_MAINLINE_VERSION})
-set(osg_fork_plugins_dir ${prefix}/osg_fork/lib/osgPlugins-3.7.0)
 
-set(COMMON_CMAKE_ARGS_NO_PREFIX
+set(COMMON_CMAKE_ARGS
 	-DCMAKE_TOOLCHAIN_FILE=${CMAKE_SOURCE_DIR}/toolchain/ndk/build/cmake/android.toolchain.cmake
 	-DANDROID_ABI=${app_abi}
 	-DANDROID_PLATFORM=${android_platform}
@@ -82,10 +76,8 @@ set(COMMON_CMAKE_ARGS_NO_PREFIX
 	-DCMAKE_C_FLAGS=-DMYGUI_DONT_REPLACE_NULLPTR\ -I${prefix}/include/\ $ENV{CFLAGS}
 	-DCMAKE_CXX_FLAGS=-DMYGUI_DONT_REPLACE_NULLPTR\ -I${prefix}/include/\ $ENV{CXXFLAGS}
 	-DCMAKE_SHARED_LINKER_FLAGS=$ENV{LDFLAGS}
-)
-
-set(COMMON_CMAKE_ARGS
-	${COMMON_CMAKE_ARGS_NO_PREFIX}
+	-DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+	-DCMAKE_DEBUG_POSTFIX=
 	-DCMAKE_INSTALL_PREFIX=${prefix}
 	-DCMAKE_FIND_ROOT_PATH=${prefix}
 )
@@ -353,6 +345,8 @@ ExternalProject_Add(mygui
 	URL_HASH ${MYGUI_HASH}
 	DOWNLOAD_DIR ${download_dir}
 
+	PATCH_COMMAND patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/mygui-dont-set-debug-postfix.patch
+
 	CONFIGURE_COMMAND ${wrapper_command} cmake <SOURCE_DIR>
 	${COMMON_CMAKE_ARGS}
 	-DMYGUI_RENDERSYSTEM=ON
@@ -403,9 +397,11 @@ set(OSG_COMMON
 	-DBUILD_OSG_PLUGIN_JPEG=ON
 	-DBUILD_OSG_PLUGIN_PNG=ON
 	-DBUILD_OSG_DEPRECATED_SERIALIZERS=OFF
+	-DANDROID=ON
 )
 
 set(OSG_PATCH
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/osg/remove-lib-prefix-from-plugins.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/osg/0001-Replace-Atomic-impl-with-std-atomic.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/osg/0002-BufferObject-make-numClients-atomic.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/osg/0003-Array-make-possible-to-use-thread-safely-with-setTex.patch &&
@@ -413,36 +409,16 @@ set(OSG_PATCH
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/osg/0005-CullSettings-make-inheritanceMask-atomic-to-silence-.patch
 )
 
-ExternalProject_Add(osg_mainline
+ExternalProject_Add(osg
 	DEPENDS libjpeg-turbo libpng gl4es
 
-	URL https://github.com/openscenegraph/OpenSceneGraph/archive/OpenSceneGraph-${OSG_MAINLINE_VERSION}.tar.gz
-	URL_HASH ${OSG_MAINLINE_HASH}
-	DOWNLOAD_DIR ${download_dir}
+	GIT_REPOSITORY https://github.com/Capostrophic/OpenSceneGraph.git
+	GIT_TAG 3.6
 
 	PATCH_COMMAND ${OSG_PATCH}
 
 	CONFIGURE_COMMAND ${wrapper_command} cmake <SOURCE_DIR>
-	${COMMON_CMAKE_ARGS_NO_PREFIX}
-	-DCMAKE_INSTALL_PREFIX=${prefix}/osg_mainline
-	${OSG_COMMON}
-
-	BUILD_COMMAND ${wrapper_command} $(MAKE)
-
-	INSTALL_COMMAND mkdir -p <SOURCE_DIR>/3rdparty/build/libpng <SOURCE_DIR>/3rdparty/build/libjpeg
-	COMMAND $(MAKE) install
-)
-
-ExternalProject_Add(osg_fork
-	DEPENDS libjpeg-turbo libpng gl4es
-
-	URL https://github.com/OpenMW/osg/archive/${OSG_FORK_VERSION}.tar.gz
-	URL_HASH ${OSG_FORK_HASH}
-	DOWNLOAD_DIR ${download_dir}
-
-	CONFIGURE_COMMAND ${wrapper_command} cmake <SOURCE_DIR>
-	${COMMON_CMAKE_ARGS_NO_PREFIX}
-	-DCMAKE_INSTALL_PREFIX=${prefix}/osg_fork
+	${COMMON_CMAKE_ARGS}
 	${OSG_COMMON}
 
 	BUILD_COMMAND ${wrapper_command} $(MAKE)
@@ -470,28 +446,41 @@ set(OPENMW_COMMON
 	-DMyGUI_LIBRARY=${prefix}/lib/libMyGUIEngineStatic.a
 )
 set(OPENMW_PATCH
-	# patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw-revert-ui-dimensions.patch &&
-	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw-add-simpler-collisions-option.patch &&
-	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw-shadows-red-sky.patch &&
-	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw-mouse-visibility.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0001-loadingscreen-disable-for-now.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0002-scenemanager-disable-state-share-inc-compile-openmw.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0003-globalmap-fix-race-vs-savegame-load.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0004-getUVBuffer-pre-set-array-binding-to-avoid-thread-ra.patch &&
-	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0008-Revert-Merge-pull-request-2238-from-Capostrophic-fre.patch
+	#patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0005-android-Revert-UI-dimensions.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0006-Add-an-option-to-enable-simple-bounding-box.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0007-android-Fix-red-sky-after-shadows-merge.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0008-Revert-Merge-pull-request-2238-from-Capostrophic-fre.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0009-windowmanagerimp-always-show-mouse-when-possible-pat.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0010-android-fix-context-being-lost-on-app-minimize.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0011-android-pause-the-game-on-minimize.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0012-engine-pause-sounds-when-game-is-paused.patch
+	# patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0013-android-Update-default-settings-for-android.patch &&
+	#patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/2344.patch
 )
 
 set(TES3MP_PATCH
-	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/android-main-fix.patch &&
-	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw-mouse-visibility.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/android-main.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0001-loadingscreen-disable-for-now.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0002-scenemanager-disable-state-share-inc-compile.patch &&
 	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0003-globalmap-fix-race-vs-savegame-load.patch &&
-	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0004-getUVBuffer-pre-set-array-binding-to-avoid-thread-ra.patch 
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0004-getUVBuffer-pre-set-array-binding-to-avoid-thread-ra.patch &&
+	# patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0005-android-Revert-UI-dimensions.patch &&
+	# patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0006-Add-an-option-to-enable-simple-bounding-box.patch &&
+	# patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0007-android-Fix-red-sky-after-shadows-merge.patch &&
+	# patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0008-Revert-Merge-pull-request-2238-from-Capostrophic-fre.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0009-windowmanagerimp-always-show-mouse-when-possible-pat.patch &&
+	# patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0010-android-fix-context-being-lost-on-app-minimize.patch &&
+	# patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0011-android-pause-the-game-on-minimize.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0012-engine-pause-sounds-when-game-is-paused.patch &&
+	patch -d <SOURCE_DIR> -p1 -t -N < ${CMAKE_SOURCE_DIR}/patches/openmw/0013-engine-fix-window-creation-when-SDL-returns-differen.patch
 )
 
-ExternalProject_Add(openmw_osg_mainline
-	DEPENDS boost openal osg_mainline mygui ffmpeg sdl2 bullet
+ExternalProject_Add(openmw
+	DEPENDS boost openal osg mygui ffmpeg sdl2 bullet
 
 	GIT_REPOSITORY https://github.com/openmw/openmw.git
 	GIT_TAG master
@@ -501,49 +490,14 @@ ExternalProject_Add(openmw_osg_mainline
 	CONFIGURE_COMMAND ${wrapper_command} cmake <SOURCE_DIR>
 	${COMMON_CMAKE_ARGS}
 	${OPENMW_COMMON}
-	-DOSG_PLUGINS_DIR=${osg_mainline_plugins_dir}
-	-DOSGDB_BMP_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_bmp.a
-	-DOSGDB_DDS_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_dds.a
-	-DOSGDB_JPEG_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_jpeg.a
-	-DOSGDB_OSG_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_osg.a
-	-DOSGDB_PNG_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_png.a
-	-DOSGDB_TGA_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_tga.a
-	-DOSGDB_SERIALIZERS_OSG_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_serializers_osg.a
-	-DOPENMW_DEPENDENCIES_DIR=${prefix}/osg_mainline
 
 	BUILD_COMMAND $(MAKE)
 
 	INSTALL_COMMAND ""
 )
 
-ExternalProject_Add(openmw_osg_fork
-	DEPENDS boost openal osg_fork mygui ffmpeg sdl2 bullet
-
-	GIT_REPOSITORY https://github.com/openmw/openmw.git
-	GIT_TAG master
-
-	PATCH_COMMAND ${OPENMW_PATCH}
-
-	CONFIGURE_COMMAND ${wrapper_command} cmake <SOURCE_DIR>
-	${COMMON_CMAKE_ARGS}
-	${OPENMW_COMMON}
-	-DOSG_PLUGINS_DIR=${osg_fork_plugins_dir}
-	-DOSGDB_BMP_LIBRARY=${osg_fork_plugins_dir}/libosgdb_bmp.a
-	-DOSGDB_DDS_LIBRARY=${osg_fork_plugins_dir}/libosgdb_dds.a
-	-DOSGDB_JPEG_LIBRARY=${osg_fork_plugins_dir}/libosgdb_jpeg.a
-	-DOSGDB_OSG_LIBRARY=${osg_fork_plugins_dir}/libosgdb_osg.a
-	-DOSGDB_PNG_LIBRARY=${osg_fork_plugins_dir}/libosgdb_png.a
-	-DOSGDB_TGA_LIBRARY=${osg_fork_plugins_dir}/libosgdb_tga.a
-	-DOSGDB_SERIALIZERS_OSG_LIBRARY=${osg_fork_plugins_dir}/libosgdb_serializers_osg.a
-	-DOPENMW_DEPENDENCIES_DIR=${prefix}/osg_fork
-
-	BUILD_COMMAND $(MAKE)
-
-	INSTALL_COMMAND ""
-)
-
-ExternalProject_Add(tes3mp_osg_mainline
-	DEPENDS boost openal osg_mainline mygui ffmpeg sdl2 bullet raknet
+ExternalProject_Add(tes3mp
+	DEPENDS boost openal osg mygui ffmpeg sdl2 bullet raknet
 
 	GIT_REPOSITORY https://github.com/tes3mp/openmw-tes3mp.git
 	GIT_TAG 0.7.0
@@ -553,41 +507,6 @@ ExternalProject_Add(tes3mp_osg_mainline
 	CONFIGURE_COMMAND ${wrapper_command} cmake <SOURCE_DIR>
 	${COMMON_CMAKE_ARGS}
 	${OPENMW_COMMON}
-	-DOSG_PLUGINS_DIR=${osg_mainline_plugins_dir}
-	-DOSGDB_BMP_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_bmp.a
-	-DOSGDB_DDS_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_dds.a
-	-DOSGDB_JPEG_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_jpeg.a
-	-DOSGDB_OSG_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_osg.a
-	-DOSGDB_PNG_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_png.a
-	-DOSGDB_TGA_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_tga.a
-	-DOSGDB_SERIALIZERS_OSG_LIBRARY=${osg_mainline_plugins_dir}/libosgdb_serializers_osg.a
-	-DOPENMW_DEPENDENCIES_DIR=${prefix}/osg_mainline
-
-	BUILD_COMMAND $(MAKE)
-
-	INSTALL_COMMAND ""
-)
-
-ExternalProject_Add(tes3mp_osg_fork
-	DEPENDS boost openal osg_fork mygui ffmpeg sdl2 bullet raknet
-
-	GIT_REPOSITORY https://github.com/tes3mp/openmw-tes3mp.git
-	GIT_TAG 0.7.0
-
-	PATCH_COMMAND ${TES3MP_PATCH}
-
-	CONFIGURE_COMMAND ${wrapper_command} cmake <SOURCE_DIR>
-	${COMMON_CMAKE_ARGS}
-	${OPENMW_COMMON}
-	-DOSG_PLUGINS_DIR=${osg_fork_plugins_dir}
-	-DOSGDB_BMP_LIBRARY=${osg_fork_plugins_dir}/libosgdb_bmp.a
-	-DOSGDB_DDS_LIBRARY=${osg_fork_plugins_dir}/libosgdb_dds.a
-	-DOSGDB_JPEG_LIBRARY=${osg_fork_plugins_dir}/libosgdb_jpeg.a
-	-DOSGDB_OSG_LIBRARY=${osg_fork_plugins_dir}/libosgdb_osg.a
-	-DOSGDB_PNG_LIBRARY=${osg_fork_plugins_dir}/libosgdb_png.a
-	-DOSGDB_TGA_LIBRARY=${osg_fork_plugins_dir}/libosgdb_tga.a
-	-DOSGDB_SERIALIZERS_OSG_LIBRARY=${osg_fork_plugins_dir}/libosgdb_serializers_osg.a
-	-DOPENMW_DEPENDENCIES_DIR=${prefix}/osg_fork
 
 	BUILD_COMMAND $(MAKE)
 

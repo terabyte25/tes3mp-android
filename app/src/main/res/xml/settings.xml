@@ -1,44 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:key="genereal_settings"
-        android:title="General settings">
-
-        <EditTextPreference
-            android:key="data_files"
-            android:title="@string/data_files"
-            />
-
-        <EditTextPreference
-            android:key="commandLine"
-            android:title="@string/pref_commandLine"
-            />
-
-        <CheckBoxPreference
-            android:key="hidecontrols"
-            android:title="Hide onscreen buttons" />
-
-        <CheckBoxPreference
-            android:key="screen_keeper"
-            android:summary="Keep screen always on"
-            android:title="Screen" />
-
-        <CheckBoxPreference
-            android:key="touchControl"
-            android:summary="Change between touch control and cursor mode"
-            android:title="Touch Control" />
+        android:key="general_settings"
+        android:title="@string/general_settings">
 
         <CheckBoxPreference
             android:key="multiplayer"
             android:summary="Change between Singleplayer and Multiplayer mode"
             android:title="Multiplayer" />
 
-
-    </PreferenceCategory>
-
-
-    <PreferenceCategory android:title="@string/pref_lang">
         <ListPreference
             android:key="pref_encoding"
             android:summary="%s"
@@ -49,23 +19,62 @@
             android:defaultValue="@string/pref_encoding_default"
             />
 
+        <Preference
+            android:key="game_files"
+            android:title="@string/game_files"
+            />
+
+        <Preference
+            android:title="@string/mods"
+            android:key="pref_mods"
+            />
+            
+        <Preference
+            android:title="Server Browser"
+            android:key="pref_browser"
+            />
     </PreferenceCategory>
 
 
     <PreferenceCategory android:title="@string/pref_ui">
+        <Preference
+            android:title="@string/action_show_screen_controls"
+            android:key="pref_controls"
+            />
+
         <EditTextPreference
             android:key="pref_uiScaling"
             android:title="@string/pref_uiScaling"
             android:dialogTitle="@string/pref_uiScaling"
             android:inputType="numberDecimal"
+            android:hint="1.5"
             />
 
-        <EditTextPreference
-            android:key="pref_touchpadSensitivity"
-            android:title="@string/pref_touchpadSensitivity"
-            android:dialogTitle="@string/pref_touchpadSensitivity"
-            android:inputType="numberDecimal"
+        <ListPreference
+            android:key="pref_mouse_mode"
+            android:title="@string/pref_mouse_mode"
+            android:dialogTitle="@string/pref_mouse_mode"
+            android:entries="@array/pref_mouse_mode_entries"
+            android:entryValues="@array/pref_mouse_mode_values"
+            android:defaultValue="@string/pref_mouse_mode_default"
+            android:summary="%s"
             />
+
+        <CheckBoxPreference
+            android:key="pref_hide_controls"
+            android:title="@string/pref_hide_controls" />
+
+        <CheckBoxPreference
+            android:key="pref_always_show_top_bar"
+            android:title="@string/pref_always_show_top_bar" />
+
+        <CheckBoxPreference
+            android:key="pref_show_qp"
+            android:title="@string/pref_show_qp" />
+
+        <CheckBoxPreference
+            android:key="pref_show_fn"
+            android:title="@string/pref_show_fn" />
 
         <EditTextPreference
             android:key="pref_customResolution"
@@ -73,26 +82,20 @@
             android:dialogTitle="@string/pref_customResolution"
             android:hint="640x480"
             />
+
+        <CheckBoxPreference
+            android:key="pref_screen_keeper"
+            android:title="@string/pref_screen_keeper"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_advanced">
+    <PreferenceCategory android:title="@string/category_performance">
         <ListPreference
-            android:key="pref_graphicsLibrary"
-            android:title="@string/pref_graphicsLibrary"
-            android:dialogTitle="@string/pref_graphicsLibrary"
-            android:entries="@array/pref_graphicsLibrary_entries"
-            android:entryValues="@array/pref_graphicsLibrary_values"
-            android:defaultValue="@string/pref_graphicsLibrary_default"
-            android:summary="%s"
-        />
-
-        <ListPreference
-            android:key="pref_osg"
-            android:title="@string/pref_osg"
-            android:dialogTitle="@string/pref_osg"
-            android:entries="@array/pref_osg_entries"
-            android:entryValues="@array/pref_osg_values"
-            android:defaultValue="@string/pref_osg_default"
+            android:key="pref_unsafe_state_graph"
+            android:title="@string/pref_unsafe_state_graph"
+            android:dialogTitle="@string/pref_unsafe_state_graph"
+            android:entries="@array/pref_unsafe_state_graph_entries"
+            android:entryValues="@array/pref_unsafe_state_graph_values"
+            android:defaultValue="@string/pref_unsafe_state_graph_default"
             android:summary="%s"
             />
 
@@ -125,25 +128,23 @@
             android:defaultValue="@string/pref_preload_default"
             android:summary="%s"
             />
+    </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_advanced">
         <EditTextPreference
-            android:key="pref_viewingDistance"
-            android:title="@string/pref_viewingDistance"
-            android:dialogTitle="@string/pref_viewingDistance"
-            android:defaultValue="@string/pref_viewingDistance_default"
-            android:inputType="numberDecimal"
-            />
-        
-        <ListPreference
-            android:key="pref_distantTerrain"
-            android:title="@string/pref_distantTerrain"
-            android:dialogTitle="@string/pref_distantTerrain"
-            android:entries="@array/pref_distantTerrain_entries"
-            android:entryValues="@array/pref_distantTerrain_values"
-            android:defaultValue="@string/pref_distantTerrain_default"
-            android:summary="%s"
+            android:key="commandLine"
+            android:title="@string/pref_commandLine"
             />
 
+        <ListPreference
+            android:key="pref_graphicsLibrary"
+            android:title="@string/pref_graphicsLibrary"
+            android:dialogTitle="@string/pref_graphicsLibrary"
+            android:entries="@array/pref_graphicsLibrary_entries"
+            android:entryValues="@array/pref_graphicsLibrary_values"
+            android:defaultValue="@string/pref_graphicsLibrary_default"
+            android:summary="%s"
+        />
     </PreferenceCategory>
 
 </PreferenceScreen>

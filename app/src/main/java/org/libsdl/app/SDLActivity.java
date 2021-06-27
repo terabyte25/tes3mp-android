@@ -31,7 +31,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.ApplicationInfo;
 import android.text.method.ScrollingMovementMethod;
 
+import ui.activity.GameActivity;
 import ui.activity.MainActivity;
+import ui.activity.MouseMode;
 
 /**
     SDL Activity
@@ -385,7 +387,6 @@ public class SDLActivity extends Activity {
                     // FIXME: Why aren't we enabling sensor input at start?
 
                     mSDLThread = new Thread(new SDLMain(), "SDLThread");
-                    mSurface.enableSensor(Sensor.TYPE_ACCELEROMETER, true);
                     mSDLThread.start();
                 }
 
@@ -548,6 +549,9 @@ public class SDLActivity extends Activity {
     public static native int isMouseShown();
     public static native void sendRelativeMouseMotion(int x, int y);
     public static native void sendMouseButton(int state, int button);
+
+    public static native void omwSurfaceDestroyed();
+    public static native void omwSurfaceRecreated();
 
 
     /**
@@ -931,8 +935,35 @@ public class SDLActivity extends Activity {
         return messageboxSelection[0];
     }
 
+    private Dialog showModernDialog(Bundle args) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        int[] buttonIds = args.getIntArray("buttonIds");
+        String[] buttonTexts = args.getStringArray("buttonTexts");
+
+        if (buttonIds.length >= 1)
+            builder.setPositiveButton(buttonTexts[0], (dialog, which) -> {
+                messageboxSelection[0] = buttonIds[0];
+                dialog.dismiss();
+            });
+
+        AlertDialog dialog = builder.create();
+        dialog.setTitle(args.getString("title"));
+        dialog.setCancelable(false);
+        dialog.setOnDismissListener(unused -> {
+            synchronized (messageboxSelection) {
+                messageboxSelection.notify();
+            }
+        });
+        dialog.setMessage(args.getString("message"));
+
+        return dialog;
+    }
+
     @Override
     protected Dialog onCreateDialog(int ignore, Bundle args) {
+        if (args.getIntArray("buttonIds").length <= 1)
+            return showModernDialog(args);
 
         // TODO set values from "flags" to messagebox dialog
 
@@ -1144,8 +1175,8 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     // Startup
     public SDLSurface(Context context) {
         super(context);
-        fixedWidth = MainActivity.resolutionX;
-        fixedHeight = MainActivity.resolutionY;
+        fixedWidth = MainActivity.Companion.getResolutionX();
+        fixedHeight = MainActivity.Companion.getResolutionY();
 
         if (fixedWidth > 0) {
             getHolder().setFixedSize(fixedWidth, fixedHeight);
@@ -1156,8 +1187,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         setFocusableInTouchMode(true);
         requestFocus();
         setOnKeyListener(this);
-        if (PreferenceManager.getDefaultSharedPreferences(SDL.getContext()).getBoolean("touchControl", false))
-            setOnTouchListener(this);
+        setOnTouchListener(this);
 
         mDisplay = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         mSensorManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
@@ -1202,9 +1232,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         setFocusableInTouchMode(true);
         requestFocus();
         setOnKeyListener(this);
-        if (PreferenceManager.getDefaultSharedPreferences(SDL.getContext()).getBoolean("touchControl", false))
-            setOnTouchListener(this);
-        enableSensor(Sensor.TYPE_ACCELEROMETER, true);
+        setOnTouchListener(this);
     }
 
     public Surface getNativeSurface() {
@@ -1216,6 +1244,8 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     public void surfaceCreated(SurfaceHolder holder) {
         Log.v("SDL", "surfaceCreated()");
         holder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
+
+        SDLActivity.omwSurfaceRecreated();
     }
 
     // Called when we lose the surface
@@ -1229,6 +1259,8 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
 
         SDLActivity.mIsSurfaceReady = false;
         SDLActivity.onNativeSurfaceDestroyed();
+
+        SDLActivity.omwSurfaceDestroyed();
     }
 
     // Called when the surface is resized
@@ -1399,6 +1431,15 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         int mouseButton;
         int i = -1;
         float x,y,p;
+
+        // drop event unless the mouse is shown (i.e. unless we're in a mouse-enabled menu)
+        if ((action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) &&
+                SDLActivity.isMouseShown() == 0)
+            return false;
+
+        // For joystick mode don't process touch events at all
+        if (GameActivity.Companion.getMouseMode() == MouseMode.Joystick)
+            return false;
 
         // !!! FIXME: dump this SDK check after 2.0.4 ships and require API14.
         if (event.getSource() == InputDevice.SOURCE_MOUSE && SDLActivity.mSeparateMouseAndTouch) {
